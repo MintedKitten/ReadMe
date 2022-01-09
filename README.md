@@ -1,3 +1,3 @@
-# ReadNow
-ITE - 439: Read Me!
-Read Me! wants you to read more books!
+# Read me
+ITE - 439: Read me
+Read me wants you to read more books!
