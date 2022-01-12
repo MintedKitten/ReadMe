@@ -38,6 +38,7 @@ const Section = ({children, title}): Node => {
           },
         ]}>
         {title}
+        This is the beginning of Read me!
       </Text>
       <Text
         style={[
