@@ -38,7 +38,6 @@ const Section = ({children, title}): Node => {
           },
         ]}>
         {title}
-        This is the beginning of Read me!
       </Text>
       <Text
         style={[
@@ -71,10 +70,12 @@ const App: () => Node = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <Section ttile="User Created">This is the beginning of Read me!</Section>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
             screen and then come back to see your edits.
           </Section>
+          
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>
