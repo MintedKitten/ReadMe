@@ -1,7 +1,2 @@
-<h1>Project Development</h1>
-<a href="https://github.com/MintedKitten/ReadMe/tree/main/Documents/Phase%201"><h2>Phase 1: Proposal</h2></a>
-<a href="https://github.com/MintedKitten/ReadMe/blob/main/Documents/Phase%201/Project%20Proposal.pdf">Proposal.pdf</a>
-<a href="https://github.com/MintedKitten/ReadMe/tree/main/Documents/Phase%202"><h2>Phase 2: Prototype</h2></a>
-<a href="https://github.com/MintedKitten/ReadMe/blob/main/Documents/Phase%202/Read%20me%20Prototype.pdf">Prototype.pdf</a><br>
-<a href="https://github.com/MintedKitten/ReadMe/blob/main/Documents/Phase%202/Read%20me%20Prototype.docx">Prototype.docx</a><br>
-(![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white))
+
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
