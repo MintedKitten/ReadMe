@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import type {Node} from 'react';
 import {
   SafeAreaView,
@@ -25,9 +25,17 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {Button, Icon, Overlay} from 'react-native-elements';
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
+
+  const [visible, setVisible] = useState(false);
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -48,6 +56,29 @@ const Section = ({children, title}): Node => {
         ]}>
         {children}
       </Text>
+      <Button
+        title="Open Overlay"
+        onPress={() => {
+          toggleOverlay();
+        }}
+      />
+      <Overlay
+        isVisible={visible}
+        onBackdropPress={() => {
+          toggleOverlay();
+        }}>
+        <Text>Hello! This is an Overlay</Text>
+        <Text>Created with React Native Elements</Text>
+        <Button
+          icon={
+            <Icon name="wrench" type="font-awesome" color="grey" size={25} />
+          }
+          title="Close Overlay"
+          onPress={() => {
+            toggleOverlay();
+          }}
+        />
+      </Overlay>
     </View>
   );
 };
