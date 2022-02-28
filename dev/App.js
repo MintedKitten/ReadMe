@@ -62,6 +62,7 @@ const Section = ({children, title}): Node => {
           toggleOverlay();
         }}
       />
+      {/* Overlay over the top of components from the above */}
       <Overlay
         isVisible={visible}
         onBackdropPress={() => {
