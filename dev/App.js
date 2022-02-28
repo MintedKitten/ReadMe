@@ -1,9 +1,9 @@
 import {StyleSheet, Text, View, Button} from 'react-native';
 import React, {useState} from 'react';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 function HomeScreen({navigation}) {
   return (
@@ -36,10 +36,24 @@ function NewScreen({navigation}) {
 const App = () => {
   return (
     <NavCon>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="New" component={NewScreen} />
-      </Stack.Navigator>
+      <Tab.Navigator
+        initialRouteName="Home"
+        screenOptions={({route}) => ({
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName;
+            if (route.name === 'Home') {
+              iconName = focused
+                ? 'ios-information-circle'
+                : 'ios-information-circle-outline';
+            } else if (route.name === 'New') {
+              iconName = focused ? 'ios-list-box' : 'ios-list';
+            }
+            // return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="New" component={NewScreen} />
+      </Tab.Navigator>
     </NavCon>
   );
 };
