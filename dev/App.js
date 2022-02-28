@@ -30,12 +30,6 @@ import {Button, Icon, Overlay} from 'react-native-elements';
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [visible, setVisible] = useState(false);
-
-  const toggleOverlay = () => {
-    setVisible(!visible);
-  };
-
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -56,6 +50,26 @@ const Section = ({children, title}): Node => {
         ]}>
         {children}
       </Text>
+    </View>
+  );
+};
+
+const App: () => Node = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const [visible, setVisible] = useState(false);
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+
+  return (
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <Button
         title="Open Overlay"
         onPress={() => {
@@ -80,20 +94,6 @@ const Section = ({children, title}): Node => {
           }}
         />
       </Overlay>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
