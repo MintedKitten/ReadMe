@@ -1,12 +1,14 @@
+import 'react-native-gesture-handler';
 import {StyleSheet, Text, View, Button} from 'react-native';
 import React, {useState} from 'react';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 function HomeScreen({navigation}) {
@@ -226,13 +228,62 @@ function MyTab() {
   );
 }
 
-const App = () => {
+const Contact = () => {
+  return (
+    <View
+      styles={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+      <Text>This is Contact</Text>
+    </View>
+  );
+};
+
+const About = () => {
+  return (
+    <View
+      styles={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+      <Text>This is About</Text>
+    </View>
+  );
+};
+
+const Home = () => {
+  return (
+    <View
+      styles={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+      <Text>This is the Home Page</Text>
+      <Button title="Go to About" />
+    </View>
+  );
+};
+
+function NavigationPage() {
   return (
     <NavCon>
-      {/* <MyTab /> */}
-      <TestStackA />
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="About" component={About} />
+      </Stack.Navigator>
     </NavCon>
   );
+}
+
+const App = () => {
+  return <NavigationPage />;
 };
 
 export default App;
