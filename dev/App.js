@@ -30,7 +30,7 @@ function NewScreen({navigation}) {
       <Button
         title="to More"
         onPress={() => {
-          navigation.navigate('B', {screen: 'More'});
+          navigation.navigate('More');
         }}
       />
     </View>
@@ -44,7 +44,7 @@ function MoreScreen({navigation}) {
       <Button
         title="Back Home"
         onPress={() => {
-          navigation.navigate('A', {screen: 'Home'});
+          navigation.navigate('New');
         }}
       />
     </View>
@@ -165,6 +165,13 @@ function TestStackA() {
           animation: 'slide_from_right',
         }}
       />
+      <Stack.Screen
+        name="More"
+        component={MoreScreen}
+        options={{
+          animation: 'slide_from_right',
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -223,16 +230,7 @@ const App = () => {
   return (
     <NavCon>
       {/* <MyTab /> */}
-
-      {/* <Tab.Navigator initialRouteName="HomeStack">
-        <Tab.Screen name="HomeStack" component={HomeStackScreen} />
-        <Tab.Screen name="NewStack" component={NewStackScreen} />
-      </Tab.Navigator> */}
-      <Tab.Navigator initialRouteName="A">
-        <Tab.Screen name="A" component={TestStackA} />
-        <Tab.Screen name="B" component={TestStackB} />
-      </Tab.Navigator>
-      {/* <TestStackB /> */}
+      <TestStackA />
     </NavCon>
   );
 };
