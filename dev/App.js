@@ -1,9 +1,12 @@
 import 'react-native-gesture-handler';
-import {StyleSheet, Text, View, Button} from 'react-native';
+import {StyleSheet, Text, View, Button, Animated} from 'react-native';
 import React, {useState} from 'react';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -256,7 +259,7 @@ const About = () => {
   );
 };
 
-const Home = () => {
+const Home = ({navigation}) => {
   return (
     <View
       styles={{
@@ -266,18 +269,117 @@ const Home = () => {
         textAlign: 'center',
       }}>
       <Text>This is the Home Page</Text>
-      <Button title="Go to About" />
+      <Button
+        title="Go to About"
+        onPress={() => {
+          navigation.navigate('About');
+        }}
+      />
     </View>
+  );
+};
+
+const progress = Animated.add(
+  current.progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  }),
+  next
+    ? next.progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+      })
+    : 0,
+);
+
+const config = {
+  animation: 'spring',
+  config: {
+    stiffness: 1000,
+    damping: 50,
+    mass: 3,
+    overshootClamping: false,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+};
+
+const forSlide = ({current, next, inverted, layouts: {screen}}) => {
+  const progress = Animated.add(
+    current.progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    }),
+    next
+      ? next.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 1],
+          extrapolate: 'clamp',
+        })
+      : 0,
+  );
+
+  return {
+    cardStyle: {
+      transform: [
+        {
+          translateX: Animated.multiply(
+            progress.interpolate({
+              inputRange: [0, 1, 2],
+              outputRange: [
+                screen.width, // Focused, but offscreen in the beginning
+                0, // Fully focused
+                screen.width * -0.3, // Fully unfocused
+              ],
+              extrapolate: 'clamp',
+            }),
+            inverted,
+          ),
+        },
+      ],
+    },
+  };
+};
+
+const screenOptionStyle = {
+  headerStyle: {
+    backgroundColor: '#9AC4F8',
+  },
+  headerTintColor: 'white',
+  headerBackTitle: 'Back',
+  gestureEnabled: true,
+  gestureDirection: 'horizontal',
+  transitionSpec: {open: config, close: config},
+  cardStyleInterpolator: forSlide,
+};
+
+const MainStackNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="About" component={About} />
+    </Stack.Navigator>
+  );
+};
+
+const ContactStackNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Screen name="Contact" component={Contact} />
+    </Stack.Navigator>
   );
 };
 
 function NavigationPage() {
   return (
     <NavCon>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="About" component={About} />
-      </Stack.Navigator>
+      <Tab.Navigator screenOptions={screenOptionStyle}>
+        <Tab.Screen name="HomeTab" component={MainStackNavigator} />
+        <Tab.Screen name="ContactTab" component={ContactStackNavigator} />
+      </Tab.Navigator>
     </NavCon>
   );
 }
