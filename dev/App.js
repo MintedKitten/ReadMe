@@ -279,20 +279,20 @@ const Home = ({navigation}) => {
   );
 };
 
-const progress = Animated.add(
-  current.progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  }),
-  next
-    ? next.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-      })
-    : 0,
-);
+// const progress = Animated.add(
+//   current.progress.interpolate({
+//     inputRange: [0, 1],
+//     outputRange: [0, 1],
+//     extrapolate: 'clamp',
+//   }),
+//   next
+//     ? next.progress.interpolate({
+//         inputRange: [0, 1],
+//         outputRange: [0, 1],
+//         extrapolate: 'clamp',
+//       })
+//     : 0,
+// );
 
 const config = {
   animation: 'spring',
