@@ -386,11 +386,19 @@ function NavigationPage() {
 }
 
 const App = () => {
+<<<<<<< HEAD
   useEffect(() => {
     setTimeout(() => {
       RNBootSplash.hide({fade: true});
     }, 2000);
   }, [])
+=======
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     RNBootSplash.hide({fade: true});
+  //   }, 2000);
+  // }, [])
+>>>>>>> bb2ae3e14f02590d444b439aefbf0889367236b1
   return <NavigationPage />;
 };
 
