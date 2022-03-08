@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import {StyleSheet, Text, View, Button, Animated} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
@@ -10,6 +10,7 @@ import {
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import RNBootSplash from 'react-native-bootsplash';
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -385,6 +386,11 @@ function NavigationPage() {
 }
 
 const App = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      RNBootSplash.hide({fade: true});
+    }, 2000);
+  }, [])
   return <NavigationPage />;
 };
 
