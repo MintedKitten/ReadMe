@@ -389,7 +389,7 @@ const App = () => {
   useEffect(() => {
     setTimeout(() => {
       RNBootSplash.hide({fade: true});
-    }, 2000);
+    }, 0);
   }, [])
   return <NavigationPage />;
 };
