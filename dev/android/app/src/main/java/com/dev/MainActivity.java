@@ -21,7 +21,6 @@ public class MainActivity extends ReactActivity {
     super.onCreate(null);
     RNBootSplash.init(MainActivity.this);
   }
-<<<<<<< HEAD
   
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
@@ -34,13 +33,4 @@ public class MainActivity extends ReactActivity {
       }
     };
   }
-=======
-
-// https://www.youtube.com/watch?v=PlubOKfi46o
-//  @Override
-//  protected void loadApp(String appKey) {
-//    RNBootSplash.init(MainActivity.this); // <- initialize the splash screen
-//    super.loadApp(appKey);
-//  }
->>>>>>> bb2ae3e14f02590d444b439aefbf0889367236b1
 }
