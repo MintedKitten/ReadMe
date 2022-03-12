@@ -1,8 +1,20 @@
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import 'react-native-gesture-handler';
+import {
+  Animated,
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
+import {NavigationContainer as NavCon} from '@react-navigation/native';
+const Stackk = require('@react-navigation/stack').createStackNavigator();
+const Stack =
+  require('@react-navigation/native-stack').createNativeStackNavigator();
 
-const EditProfilePage = ({navigate}) => {
+const EditProfilePage = ({navigation}) => {
   return (
     <SafeAreaView>
       <View>
@@ -12,7 +24,7 @@ const EditProfilePage = ({navigate}) => {
   );
 };
 
-const ProfilePage = ({navigate}) => {
+const ProfilePage = ({navigation}) => {
   return (
     <SafeAreaView>
       <View>
@@ -22,7 +34,7 @@ const ProfilePage = ({navigate}) => {
   );
 };
 
-const InformationPage = ({navigate}) => {
+const InformationPage = ({navigation}) => {
   return (
     <SafeAreaView>
       <View>
@@ -32,7 +44,7 @@ const InformationPage = ({navigate}) => {
   );
 };
 
-const HistoryPage = ({navigate}) => {
+const HistoryPage = ({navigation}) => {
   return (
     <SafeAreaView>
       <View>
@@ -42,33 +54,97 @@ const HistoryPage = ({navigate}) => {
   );
 };
 
-const RegisterPage = ({navigate}) => {
+const RegisterPage = ({navigation}) => {
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View>
         <Text>Register Page</Text>
+        <Button
+          title="To Login"
+          onPress={() => {
+            navigation.navigate('Login');
+          }}
+        />
       </View>
     </SafeAreaView>
   );
 };
 
-const LoginPage = ({navigate}) => {
+const LoginPage = ({navigation}) => {
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View>
         <Text>Login Page</Text>
+        <Button
+          title="To Register"
+          onPress={() => {
+            navigation.navigate('Register');
+          }}
+        />
       </View>
     </SafeAreaView>
   );
 };
 
-const ProfileStack = () => {};
+const ProfileStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Profile"
+      screenOptions={{
+        headerStyle: {backgroundColor: '#2FA4FF'},
+        headerTintColor: '00FFDD',
+        headerBackTitle: 'Back',
+      }}>
+      <Stack.Screen name="Profile">
+        {({navigation}) => ProfilePage({navigation})}
+      </Stack.Screen>
+      <Stack.Screen name="EditProfile">
+        {({navigation}) => EditProfilePage({navigation})}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+};
 
-const AppNavigationTab = () => {};
+const AppNavigationTab = () => {
+  return <NavCon></NavCon>;
+};
 
-const LoginNavigationStack = () => {};
+const LoginNavigationStack = () => {
+  return (
+    <NavCon>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerStyle: {backgroundColor: '#2FA4FF'},
+          headerTintColor: '00FFDD',
+          headerBackTitle: 'Back',
+        }}>
+        <Stack.Screen
+          name="Login"
+          options={{
+            animation: 'slide_from_left',
+            headerShown: false,
+          }}>
+          {({navigation}) => LoginPage({navigation})}
+        </Stack.Screen>
+        <Stack.Screen
+          name="Register"
+          options={{animation: 'slide_from_right', headerShown: false}}>
+          {({navigation}) => RegisterPage({navigation})}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavCon>
+  );
+};
 
-const NavigationComponent = () => {};
+const NavigationComponent = () => {
+  return (
+    // for testing Login First then App
+    <LoginNavigationStack />
+  );
+};
 
 const App = () => {
   useEffect(() => {
@@ -77,11 +153,7 @@ const App = () => {
     }, 0);
   }, []);
 
-  return (
-    <View>
-      <Text>App</Text>
-    </View>
-  );
+  return <NavigationComponent />;
 };
 
 export default App;
