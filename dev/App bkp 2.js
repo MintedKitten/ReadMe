@@ -1,12 +1,5 @@
 import 'react-native-gesture-handler';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Animated,
-  SafeAreaView,
-} from 'react-native';
+import {StyleSheet, Text, View, Button, Animated} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -392,40 +385,13 @@ function NavigationPage() {
   );
 }
 
-const Login = () => {
-  return (
-    <SafeAreaView>
-      <Text>Test Login Page</Text>
-    </SafeAreaView>
-  );
-};
-
-const Register = () => {
-  return (
-    <SafeAreaView>
-      <Text>Test Register Page</Text>
-    </SafeAreaView>
-  );
-};
-
-const LoginNavigation = () => {
-  return (
-    <NavCon>
-      <Stack.Navigator screenOptions={screenOptionStyle}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-      </Stack.Navigator>
-    </NavCon>
-  );
-};
-
 const App = () => {
   useEffect(() => {
     setTimeout(() => {
       RNBootSplash.hide({fade: true});
     }, 0);
-  }, []);
-  return <LoginNavigation />;
+  }, [])
+  return <NavigationPage />;
 };
 
 export default App;

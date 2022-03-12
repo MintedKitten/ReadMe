@@ -1,11 +1,5 @@
 apply plugin: "com.android.application"
 
-apply plugin: 'com.google.gms.google-services'
-//project.ext.vectoricons = [
-//        iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ]
-//]
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
-
 import com.android.build.OutputFile
 
 /**
@@ -84,7 +78,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-        enableHermes: false,  // clean and rebuild if changing
+    enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -137,7 +131,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.dev"
+        applicationId "com.dev_2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -201,27 +195,17 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation "androidx.core:core-splashscreen:1.0.0-beta01"
-
-    implementation platform('com.google.firebase:firebase-bom:29.2.0')
-
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-
-    // Add the dependencies for the desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
-
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
-        exclude group: 'com.facebook.fbjni'
+        exclude group:'com.facebook.fbjni'
     }
 
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group: 'com.facebook.flipper'
-        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+        exclude group:'com.facebook.flipper'
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
-        exclude group: 'com.facebook.flipper'
+        exclude group:'com.facebook.flipper'
     }
 
     if (enableHermes) {
