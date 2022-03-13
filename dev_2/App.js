@@ -18,6 +18,7 @@ import {
   ScrollView,
   Heading,
 } from 'native-base';
+import {AirbnbRating} from 'react-native-ratings';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
@@ -286,7 +287,7 @@ const testHistory = [
     bookid: 1,
     status: 'Complete',
     pageread: 168,
-    rating: 4.1,
+    rating: 3.5,
     lastedit: new Date().toISOString(),
   },
   {
@@ -426,7 +427,17 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                         <Heading>{item.name}</Heading>
                         <Text>{item.status}</Text>
                       </Column>
-                      <Text>Rating goes here</Text>
+                      <Text>
+                        <AirbnbRating
+                          count={5}
+                          reviews={[]}
+                          reviewSize={0}
+                          size={10}
+                          defaultRating={item.rating}
+                          isDisabled={true}
+                        />
+                        <Text>{'  ' + item.rating}</Text>
+                      </Text>
                     </Column>
                     <Spacer />
                     <Column>
