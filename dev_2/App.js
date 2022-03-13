@@ -1,26 +1,17 @@
-// Invoke-Expression (((ConvertFrom-StringData (Get-Content .\dev_2\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_2_API_29')
+// Invoke-Expression (((ConvertFrom-StringData (Get-Content .\dev_2\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
 import 'react-native-gesture-handler'; 
 import {
-  Animated,
   Button,
   SafeAreaView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
-import {default as IonIcons} from 'react-native-vector-icons/Ionicons';
-import {default as FeatherIcon} from 'react-native-vector-icons/Feather';
-import {default as MCIcons} from 'react-native-vector-icons/MaterialCommunityIcons';
-import {default as MatIcons} from 'react-native-vector-icons/MaterialIcons';
-import {default as OctIcons} from 'react-native-vector-icons/Octicons';
 import {Overlay, Icon} from 'react-native-elements';
-import useStateRef from 'react-usestateref';
 
-const Stackk = require('@react-navigation/stack').createStackNavigator();
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
 const Tab =
