@@ -1,6 +1,6 @@
 // Invoke-Expression (((ConvertFrom-StringData (Get-Content .\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
 import 'react-native-gesture-handler';
-import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Text, Linking} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
@@ -32,7 +32,32 @@ const Stack =
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const EditProfilePage = ({navigation}, forceUpdate) => {
+const testProfile = [
+  {
+    id: 1,
+    name: 'John Deere',
+    genre: 'Sci-fi, Walking on the beach, and comedy',
+    bio: 'Just doing fine in the pandemic',
+    picture: {
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy.png?alt=media&token=232056d1-7f3b-4d38-ad49-8634858ec228',
+    },
+  },
+  {
+    id: 2,
+    name: 'Tim Dolly',
+    genre: 'Romance, Walking on the beach, and Science',
+    bio: 'Having a lovely',
+    picture: {
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_v2.png?alt=media&token=e527dbb1-0fe6-40fb-b5e0-f3f5e478ee61',
+    },
+  },
+];
+
+const getOneProfile = id => {
+  return testProfile.find(profile => profile.id === id);
+};
+
+const EditProfilePage = ({navigation, route}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -50,10 +75,132 @@ const EditProfilePage = ({navigation}, forceUpdate) => {
       ),
     });
   }, []);
+
+  console.log(route);
+  // let {profileId} = route.params;
+
+  const validateSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    genre: Yup.string(),
+    bio: Yup.string(),
+    picture: Yup.mixed(),
+  });
+
+  // const [profile, setProfile] = useState(getOneProfile(profileId));
+
   return (
     <SafeAreaView>
-      <View>
-        <Text>Edit Profile Page</Text>
+      <Container width="100%">
+        <Box width="100%" mt={10}>
+          <Formik
+            //the starting value
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            //onsubmitting the form alert, later firebase
+            onSubmit={async (values, {setSubmitting}) => {
+              try {
+                alert(JSON.stringify(values));
+                navigation.navigate('Login');
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setSubmitting(false);
+              }
+            }}>
+            {({
+              errors,
+              touched,
+              values,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <Flex alignItems="center">
+                <FormControl>
+                  <FormStack space={1} justifyContent="center">
+                    <FormStack>
+                      <Input
+                        type="text"
+                        variant="outline"
+                        pt={3}
+                        pl={5}
+                        pb={3}
+                        placeholder={'Email'}
+                        value={values.email}
+                        onChangeText={handleChange('email')}
+                        onBlur={handleBlur('email')}
+                        fontSize={20}
+                        borderColor={
+                          errors.email && touched.email ? 'red.600' : 'gray.300'
+                        }
+                      />
+                      <Text>
+                        {errors.email && touched.email && (
+                          <Text style={{color: 'red', fontSize: 15}}>
+                            {errors.email}
+                          </Text>
+                        )}
+                      </Text>
+                    </FormStack>
+                    <FormStack>
+                      <Input
+                        type="password"
+                        variant="outline"
+                        pt={3}
+                        pl={5}
+                        pb={3}
+                        placeholder={'Password'}
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        fontSize={20}
+                        borderColor={
+                          errors.password && touched.password
+                            ? 'red.600'
+                            : 'gray.300'
+                        }
+                      />
+                      <Text>
+                        {errors.password && touched.password && (
+                          <Text style={{color: 'red', fontSize: 15}}>
+                            {errors.password}
+                          </Text>
+                        )}
+                      </Text>
+                    </FormStack>
+                    <Button
+                      block
+                      large
+                      disabled={isSubmitting}
+                      onPress={() => {
+                        handleSubmit();
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 30,
+                          fontWeight: 'bold',
+                        }}>
+                        Login
+                      </Text>
+                    </Button>
+                  </FormStack>
+                </FormControl>
+              </Flex>
+            )}
+          </Formik>
+        </Box>
+      </Container>
+      <View
+        style={{
+          alignItems: 'center',
+          bottom: 10,
+        }}>
+        <Text style={{fontSize: 16, textAlign: 'center', color: 'grey'}}>
+          Don't have an account?
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -70,17 +217,114 @@ const ProfilePage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              navigation.navigate('EditProfile');
+              navigation.navigate('EditProfile', {id: profile.id});
             }}
           />
         </Text>
       ),
     });
   }, []);
+
+  let testId = 2;
+
+  const [profile, setProfile] = useState(getOneProfile(testId));
+
   return (
-    <SafeAreaView>
-      <View>
-        <Text>Profile Page</Text>
+    <SafeAreaView style={{flex: 1}}>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Image
+          source={profile.picture}
+          alt="Profile Picture"
+          size="xl"
+          borderRadius={10}
+        />
+        <Heading
+          width="80%"
+          fontSize={40}
+          mb={2}
+          fontWeight="extrabold"
+          textAlign="center">
+          {profile.name}
+        </Heading>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          alignItems: 'center',
+        }}>
+        <Text style={{width: '80%', marginTop: 10}}>
+          <Heading
+            flex="1"
+            fontSize={20}
+            mb={2}
+            fontWeight="medium"
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}>
+            {'Genre : '}
+          </Heading>
+          <Heading
+            flex="5"
+            fontSize={20}
+            mb={2}
+            fontWeight="medium"
+            style={{
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}>
+            {profile.genre}
+          </Heading>
+        </Text>
+        <Text style={{width: '80%', marginTop: 10}}>
+          <Heading
+            fontSize={20}
+            mb={2}
+            fontWeight="medium"
+            style={{
+              justifyContent: 'center',
+              textAlign: 'justify',
+            }}>
+            {'Bio : '}
+          </Heading>
+          <Heading
+            fontSize={20}
+            mb={2}
+            fontWeight="medium"
+            style={{
+              justifyContent: 'center',
+              textAlign: 'justify',
+            }}>
+            {profile.bio}
+          </Heading>
+        </Text>
+      </View>
+      <View
+        style={{
+          alignItems: 'center',
+        }}>
+        <Text>
+          <Text style={{fontSize: 10, textAlign: 'center', color: 'grey'}}>
+            Read me 2022{'    '}
+          </Text>
+          <Text
+            style={{fontSize: 10, textAlign: 'center', color: 'dimgrey'}}
+            onPress={() => {
+              Linking.openURL(
+                'https://github.com/MintedKitten/ReadMe/tree/main/Documents',
+              );
+            }}>
+            Term of Service, Privacy Policy, and Cookie Policy
+          </Text>
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -855,7 +1099,9 @@ const ProfileStack = forceUpdate => {
           headerTitle: () => <Text>Edit Profile</Text>,
           headerRight: () => <Text></Text>,
         }}>
-        {({navigation}) => EditProfilePage({navigation}, forceUpdate)}
+        {({navigation, route}) =>
+          EditProfilePage({navigation, route}, forceUpdate)
+        }
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -894,7 +1140,11 @@ const HistoryStack = forceUpdate => {
         name="History"
         options={{
           animation: 'slide_from_left',
-          headerTitle: () => <Text>Book History</Text>,
+          headerTitle: () => (
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
+              Book History
+            </Text>
+          ),
         }}>
         {({navigation}) => HistoryPage({navigation}, forceUpdate)}
       </Stack.Screen>
