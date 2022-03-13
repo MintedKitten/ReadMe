@@ -1,4 +1,5 @@
-import 'react-native-gesture-handler';
+// Invoke-Expression (((ConvertFrom-StringData (Get-Content .\dev_2\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_2_API_29')
+import 'react-native-gesture-handler'; 
 import {
   Animated,
   Button,
@@ -56,8 +57,9 @@ const ProfilePage = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <Text>
-          <MCIcons
+          <Icon
             name="pencil"
+            type="material-community"
             size={20}
             color="white"
             onPress={() => {
