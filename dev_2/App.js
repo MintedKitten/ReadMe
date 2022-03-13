@@ -31,8 +31,9 @@ const EditProfilePage = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <Text>
-          <OctIcons
+          <Icon
             name="checklist"
+            type="octicon"
             size={20}
             color="white"
             onPress={() => {
@@ -132,18 +133,43 @@ const InformationPage = ({navigation}) => {
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
+    console.log("Info :"+overlayVisible);
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View style={{flex: 1, alignItems: 'flex-start'}}>
+      <View>
         <Text>Book Information Page</Text>
+        <Button
+          title="Open Overlay"
+          onPress={() => {
+            toggleOverlay();
+          }}
+        />
+        <Overlay
+          isVisible={overlayVisible}
+          onBackdropPress={() => {
+            toggleOverlay();
+          }}>
+          <View>
+            <Text>This is an Overlay for Book Information</Text>
+            <Icon
+              name="book-check"
+              type="material-community"
+              size={20}
+              color="black"
+              onPress={() => {
+                toggleOverlay();
+              }}
+            />
+          </View>
+        </Overlay>
       </View>
     </SafeAreaView>
   );
 };
 
-const HistoryPage = ({navigation}) => {
+const HistoryPage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -172,45 +198,44 @@ const HistoryPage = ({navigation}) => {
     });
   }, []);
 
-  const [visible, setVisible] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
 
-  function useForceUpdate() {
-    const [force, setForce] = useState(0);
-    return () => setForce(++force);
-  }
+  console.log("Hist :"+overlayVisible);
 
   const toggleOverlay = () => {
-    setVisible(!visible);
-    useForceUpdate();
+    setOverlayVisible(!overlayVisible);
+    forceUpdate();
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Text>Reading History Page</Text>
-      <Button
-        title="Open Overlay"
-        onPress={() => {
-          toggleOverlay();
-        }}
-      />
-      <Overlay
-        isVisible={visible}
-        onBackdropPress={() => {
-          toggleOverlay();
-        }}>
-        <View>
-          <Text>This is an Overlay</Text>
-          <Icon
-            name="book-check"
-            type="material-community"
-            size={20}
-            color="black"
-            onPress={() => {
-              toggleOverlay();
-            }}
-          />
-        </View>
-      </Overlay>
+      <View>
+        <Text>Reading History Page</Text>
+        <Button
+          title="Open Overlay"
+          onPress={() => {
+            toggleOverlay();
+          }}
+        />
+        <Overlay
+          isVisible={overlayVisible}
+          onBackdropPress={() => {
+            toggleOverlay();
+          }}>
+          <View>
+            <Text>This is an Overlay for History</Text>
+            <Icon
+              name="book-check"
+              type="material-community"
+              size={20}
+              color="black"
+              onPress={() => {
+                toggleOverlay();
+              }}
+            />
+          </View>
+        </Overlay>
+      </View>
     </SafeAreaView>
   );
 };
@@ -313,7 +338,7 @@ const InformationStack = () => {
   );
 };
 
-const HistoryStack = () => {
+const HistoryStack = (forceUpdate) => {
   return (
     <Stack.Navigator
       initialRouteName="History"
@@ -327,13 +352,16 @@ const HistoryStack = () => {
           animation: 'slide_from_left',
           headerTitle: () => <Text>Book History</Text>,
         }}>
-        {({navigation}) => HistoryPage({navigation})}
+        {({navigation}) => HistoryPage({navigation}, forceUpdate)}
       </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
 const AppNavigationTab = () => {
+  const [update, setUpdate] = useState(0);
+  const forceUpdate = () => {setUpdate(update + 1);};
+
   return (
     <NavCon>
       <Tab.Navigator
@@ -398,7 +426,7 @@ const AppNavigationTab = () => {
             tabBarLabel: 'History',
             title: 'Book History',
           }}>
-          {() => HistoryStack()}
+          {() => HistoryStack(forceUpdate)}
         </Tab.Screen>
         <Tab.Screen
           name="InformationStack"
