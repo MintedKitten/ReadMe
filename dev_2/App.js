@@ -1,12 +1,6 @@
 // Invoke-Expression (((ConvertFrom-StringData (Get-Content .\dev_2\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
-import 'react-native-gesture-handler'; 
-import {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import 'react-native-gesture-handler';
+import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
@@ -17,7 +11,7 @@ const Stack =
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const EditProfilePage = ({navigation}) => {
+const EditProfilePage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -44,7 +38,7 @@ const EditProfilePage = ({navigation}) => {
   );
 };
 
-const ProfilePage = ({navigation}) => {
+const ProfilePage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -71,7 +65,7 @@ const ProfilePage = ({navigation}) => {
   );
 };
 
-const InformationPage = ({navigation}) => {
+const InformationPage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -124,7 +118,7 @@ const InformationPage = ({navigation}) => {
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
-    console.log("Info :"+overlayVisible);
+    forceUpdate();
   };
 
   return (
@@ -190,8 +184,6 @@ const HistoryPage = ({navigation}, forceUpdate) => {
   }, []);
 
   const [overlayVisible, setOverlayVisible] = useState(false);
-
-  console.log("Hist :"+overlayVisible);
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
@@ -277,7 +269,7 @@ const LoginPage = ({navigation}) => {
   );
 };
 
-const ProfileStack = () => {
+const ProfileStack = forceUpdate => {
   return (
     <Stack.Navigator
       initialRouteName="Profile"
@@ -292,7 +284,7 @@ const ProfileStack = () => {
           animation: 'slide_from_right',
           headerTitle: () => <Text>Your Profile</Text>,
         }}>
-        {({navigation}) => ProfilePage({navigation})}
+        {({navigation}) => ProfilePage({navigation}, forceUpdate)}
       </Stack.Screen>
       <Stack.Screen
         name="EditProfile"
@@ -302,13 +294,13 @@ const ProfileStack = () => {
           headerTitle: () => <Text>Edit Profile</Text>,
           headerRight: () => <Text></Text>,
         }}>
-        {({navigation}) => EditProfilePage({navigation})}
+        {({navigation}) => EditProfilePage({navigation}, forceUpdate)}
       </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
-const InformationStack = () => {
+const InformationStack = forceUpdate => {
   return (
     <Stack.Navigator
       initialRouteName="Information"
@@ -323,13 +315,13 @@ const InformationStack = () => {
           animation: 'slide_from_right',
           headerTitle: () => <Text>Book Information</Text>,
         }}>
-        {({navigation}) => InformationPage({navigation})}
+        {({navigation}) => InformationPage({navigation}, forceUpdate)}
       </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
-const HistoryStack = (forceUpdate) => {
+const HistoryStack = forceUpdate => {
   return (
     <Stack.Navigator
       initialRouteName="History"
@@ -351,7 +343,9 @@ const HistoryStack = (forceUpdate) => {
 
 const AppNavigationTab = () => {
   const [update, setUpdate] = useState(0);
-  const forceUpdate = () => {setUpdate(update + 1);};
+  const forceUpdate = () => {
+    setUpdate(update + 1);
+  };
 
   return (
     <NavCon>
@@ -425,7 +419,7 @@ const AppNavigationTab = () => {
             tabBarLabel: 'Information',
             title: 'Book Information',
           }}>
-          {() => InformationStack()}
+          {() => InformationStack(forceUpdate)}
         </Tab.Screen>
         <Tab.Screen
           name="ProfileStack"
@@ -433,7 +427,7 @@ const AppNavigationTab = () => {
             tabBarLabel: 'Profile',
             title: 'Your Profile',
           }}>
-          {() => ProfileStack()}
+          {() => ProfileStack(forceUpdate)}
         </Tab.Screen>
       </Tab.Navigator>
     </NavCon>
