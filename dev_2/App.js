@@ -172,39 +172,44 @@ const InformationPage = ({navigation}, forceUpdate) => {
           renderItem={({item, index}) => (
             <Box flex="1" safeAreaTop>
               <ScrollView>
-                <Flex direction="row" safeAreaTop>
-                  <Center>
-                    <Image
-                      source={{uri: item.picture.src}}
-                      alt={item.name}
-                      size="md"
-                      borderRadius={10}
-                    />
-                  </Center>
-                  <Column>
-                    <Heading>{item.name}</Heading>
-                    <Text>
-                      {'By ' +
-                        item.author +
-                        '\n' +
-                        item.page +
-                        ' Pages\n' +
-                        item.summary +
-                        '\n' +
-                        item.genre}
-                    </Text>
-                  </Column>
-                  <Column>
-                    <Icon
-                      name="more"
-                      type="material"
-                      onPress={() => {
-                        setToOverlay(getOneBookInformation(item.id));
-                        toggleOverlay();
-                      }}
-                    />
-                  </Column>
-                </Flex>
+                <Column my={1}>
+                  <Flex direction="row" safeAreaTop mx={1}>
+                    <Center>
+                      <Image
+                        source={{uri: item.picture.src}}
+                        alt={item.name}
+                        size="md"
+                        borderRadius={10}
+                      />
+                    </Center>
+                    <Column mx={4}>
+                      <Heading>{item.name}</Heading>
+                      <Text>
+                        {'By ' +
+                          item.author +
+                          '\n' +
+                          item.page +
+                          ' Pages\n' +
+                          item.summary +
+                          '\n' +
+                          item.genre}
+                      </Text>
+                    </Column>
+                    <Spacer />
+                    <Column>
+                      <Flex alignItems="flex-end" mr={1}>
+                        <Icon
+                          name="more"
+                          type="material"
+                          onPress={() => {
+                            setToOverlay(getOneBookInformation(item.id));
+                            toggleOverlay();
+                          }}
+                        />
+                      </Flex>
+                    </Column>
+                  </Flex>
+                </Column>
               </ScrollView>
             </Box>
           )}
@@ -416,12 +421,16 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                         borderRadius={10}
                       />
                     </Center>
-                    <Column mx={4}>
-                      <Heading>{item.name}</Heading>
-                      <Text>{item.status}</Text>
+                    <Column mx={4} justifyContent="space-between">
+                      <Column>
+                        <Heading>{item.name}</Heading>
+                        <Text>{item.status}</Text>
+                      </Column>
+                      <Text>Rating goes here</Text>
                     </Column>
+                    <Spacer />
                     <Column>
-                      <Flex alignItems="flex-end">
+                      <Flex alignItems="flex-end" mr={1}>
                         <Icon
                           name="more"
                           type="material"
