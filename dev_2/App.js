@@ -5,9 +5,10 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  View, TouchableOpacity
+  View,
+  TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
 import {default as IonIcons} from 'react-native-vector-icons/Ionicons';
@@ -15,6 +16,8 @@ import {default as FeatherIcon} from 'react-native-vector-icons/Feather';
 import {default as MCIcons} from 'react-native-vector-icons/MaterialCommunityIcons';
 import {default as MatIcons} from 'react-native-vector-icons/MaterialIcons';
 import {default as OctIcons} from 'react-native-vector-icons/Octicons';
+import {Overlay, Icon} from 'react-native-elements';
+import useStateRef from 'react-usestateref';
 
 const Stackk = require('@react-navigation/stack').createStackNavigator();
 const Stack =
@@ -43,12 +46,6 @@ const EditProfilePage = ({navigation}) => {
     <SafeAreaView>
       <View>
         <Text>Edit Profile Page</Text>
-        <Button
-          title="back"
-          onPress={() => {
-            navigation.navigate('Profile');
-          }}
-        />
       </View>
     </SafeAreaView>
   );
@@ -85,48 +82,59 @@ const InformationPage = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <Text>
-          <IonIcons
+          <Icon
             name="search-outline"
+            type="ionicon"
             size={20}
             color="white"
             onPress={() => {
               alert('search');
             }}
           />
-          {'    '}
-          <IonIcons
+          {'   '}
+          <Icon
             name="heart"
+            type="ionicon"
             size={20}
             color="white"
             onPress={() => {
               alert('hey');
             }}
           />
-          {'    '}
-          <MCIcons
+          {'   '}
+          <Icon
             name="book-plus"
+            type="material-community"
             size={20}
             color="white"
             onPress={() => {
               alert('add book');
             }}
           />
-          {'    '}
-          <MCIcons
+          {'   '}
+          <Icon
             name="book-remove"
+            type="material-community"
             size={20}
             color="white"
             onPress={() => {
               alert('delete book');
             }}
-          />{' '}
+          />
         </Text>
       ),
     });
   }, []);
+
+  const [overlayVisible, setOverlayVisible] = useState(false);
+
+  const toggleOverlay = () => {
+    setOverlayVisible(!overlayVisible);
+  };
+
   return (
-    <SafeAreaView>
-      <View>
+    <SafeAreaView style={{flex: 1}}>
+      <View style={{flex: 1, alignItems: 'flex-start'}}>
         <Text>Book Information Page</Text>
       </View>
     </SafeAreaView>
@@ -138,32 +146,70 @@ const HistoryPage = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <Text>
-          <IonIcons
+          <Icon
             name="search-outline"
+            type="ionicon"
             size={20}
             color="white"
             onPress={() => {
               alert('search');
             }}
           />
-          {'    '}
-          <IonIcons
+          {'   '}
+          <Icon
             name="bookmark"
+            type="ionicon"
             size={20}
             color="white"
             onPress={() => {
               alert('favorite');
             }}
-          />{' '}
+          />
         </Text>
       ),
     });
   }, []);
+
+  const [visible, setVisible] = useState(false);
+
+  function useForceUpdate() {
+    const [force, setForce] = useState(0);
+    return () => setForce(++force);
+  }
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+    thi
+    useForceUpdate();
+  };
+
   return (
-    <SafeAreaView>
-      <View>
-        <Text>Reading History Page</Text>
-      </View>
+    <SafeAreaView style={{flex: 1}}>
+      <Text>Reading History Page</Text>
+      <Button
+        title="Open Overlay"
+        onPress={() => {
+          toggleOverlay();
+        }}
+      />
+      <Overlay
+        isVisible={visible}
+        onBackdropPress={() => {
+          toggleOverlay();
+        }}>
+        <View>
+          <Text>This is an Overlay</Text>
+          <Icon
+            name="book-check"
+            type="material-community"
+            size={20}
+            color="black"
+            onPress={() => {
+              toggleOverlay();
+            }}
+          />
+        </View>
+      </Overlay>
     </SafeAreaView>
   );
 };
@@ -297,34 +343,54 @@ const AppNavigationTab = () => {
           tabBarIcon: ({focused, color}) => {
             let size = 20;
             let iconName = (
-              <MCIcons name="progress-question" size={size} color={color} />
+              <Icon
+                type="material-community"
+                name="progress-question"
+                size={size}
+                color={color}
+              />
             );
             if (route.name === 'HistoryStack') {
               iconName = focused ? (
-                <IonIcons name="book" size={size} color={color} />
+                <Icon type="ionicon" name="book" size={size} color={color} />
               ) : (
-                <FeatherIcon name="book" size={size} color={color} />
+                <Icon type="feather" name="book" size={size} color={color} />
               );
             } else if (route.name === 'InformationStack') {
               iconName = focused ? (
-                <MatIcons name="menu-book" size={size} color={color} />
+                <Icon
+                  type="material"
+                  name="menu-book"
+                  size={size}
+                  color={color}
+                />
               ) : (
-                <MCIcons name="bookshelf" size={size} color={color} />
+                <Icon
+                  type="material-community"
+                  name="bookshelf"
+                  size={size}
+                  color={color}
+                />
               );
             } else if (route.name === 'ProfileStack') {
               iconName = focused ? (
-                <IonIcons name="person" size={size} color={color} />
+                <Icon type="ionicon" name="person" size={size} color={color} />
               ) : (
-                <IonIcons name="person-outline" size={size} color={color} />
+                <Icon
+                  type="ionicon"
+                  name="person-outline"
+                  size={size}
+                  color={color}
+                />
               );
             }
             return iconName;
-            // return <Feather name={iconName} size={size} color={color} />;
           },
         })}
         activeColor="#2FA4FF"
         inactiveColor="#0E185F"
-        barStyle={{paddingBottom: 20, backgroundColor: '#E8FFC2'}}>
+        keyboardHidesNavigationBar={true}
+        barStyle={{paddingBottom: 0, backgroundColor: '#E8FFC2'}}>
         <Tab.Screen
           name="HistoryStack"
           options={{
@@ -383,12 +449,12 @@ const LoginNavigationStack = () => {
 };
 
 const NavigationComponent = () => {
-  const [token, setToken] = useState(true);
+  const [session, setSession] = useState('test_token');
 
   return (
     // for testing Login First then App
-    // <>{token === true ? <AppNavigationTab /> : <LoginNavigationStack />}</>
-    <LoginNavigationStack />
+    <>{session.length > 0 ? <AppNavigationTab /> : <LoginNavigationStack />}</>
+    // <LoginNavigationStack />
     // <AppNavigationTab />
   );
 };
