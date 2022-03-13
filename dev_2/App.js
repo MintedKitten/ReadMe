@@ -1,4 +1,4 @@
-// Invoke-Expression (((ConvertFrom-StringData (Get-Content .\dev_2\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
+// Invoke-Expression (((ConvertFrom-StringData (Get-Content .\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
 import 'react-native-gesture-handler';
 import {SafeAreaView, StyleSheet, View, Text, Button} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
@@ -19,6 +19,8 @@ import {
   Heading,
 } from 'native-base';
 import {AirbnbRating} from 'react-native-ratings';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
@@ -724,7 +726,7 @@ const LoginNavigationStack = () => {
 };
 
 const NavigationComponent = () => {
-  const [session, setSession] = useState('test_token');
+  const [session, setSession] = useState('');
 
   return (
     // for testing Login First then App
