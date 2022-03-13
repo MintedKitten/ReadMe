@@ -179,7 +179,6 @@ const HistoryPage = ({navigation}) => {
 
   const toggleOverlay = () => {
     setVisible(!visible);
-    thi
     useForceUpdate();
   };
 
