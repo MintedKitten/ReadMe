@@ -1,6 +1,13 @@
 // Invoke-Expression (((ConvertFrom-StringData (Get-Content .\android\local.properties -raw)).'sdk.dir')+'\emulator\emulator.exe -avd Pixel_3_API_29')
 import 'react-native-gesture-handler';
-import {SafeAreaView, StyleSheet, View, Text, Linking} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  Linking,
+  TextInput,
+} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer as NavCon} from '@react-navigation/native';
@@ -22,6 +29,9 @@ import {
   Stack as FormStack,
   Input,
   Button,
+  InputLeftAddon,
+  InputGroup,
+  TextArea,
 } from 'native-base';
 import {AirbnbRating} from 'react-native-ratings';
 import {Formik} from 'formik';
@@ -39,7 +49,7 @@ const testProfile = [
     genre: 'Sci-fi, Walking on the beach, and comedy',
     bio: 'Just doing fine in the pandemic',
     picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy.png?alt=media&token=232056d1-7f3b-4d38-ad49-8634858ec228',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v1.png?alt=media&token=9a331dec-d288-4e4d-83a6-4729f6829f84',
     },
   },
   {
@@ -48,7 +58,7 @@ const testProfile = [
     genre: 'Romance, Walking on the beach, and Science',
     bio: 'Having a lovely',
     picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_v2.png?alt=media&token=e527dbb1-0fe6-40fb-b5e0-f3f5e478ee61',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v2.png?alt=media&token=d4832dd3-1a3e-45fa-b2ca-6bbe66cbda5b',
     },
   },
 ];
@@ -68,6 +78,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
+              alert(JSON.stringify(submitted)); // To Change Profile Function
               navigation.navigate('Profile');
             }}
           />
@@ -76,8 +87,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
     });
   }, []);
 
-  console.log(route);
-  // let {profileId} = route.params;
+  let profileId = route.params.id;
 
   const validateSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -86,122 +96,155 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
     picture: Yup.mixed(),
   });
 
-  // const [profile, setProfile] = useState(getOneProfile(profileId));
+  const [profile, setProfile] = useState(getOneProfile(profileId));
+  let submitted = {};
+
+  const onSubmit = value => {
+    submitted = value;
+  };
 
   return (
-    <SafeAreaView>
-      <Container width="100%">
-        <Box width="100%" mt={10}>
-          <Formik
-            //the starting value
-            initialValues={{
-              email: '',
-              password: '',
-            }}
-            //onsubmitting the form alert, later firebase
-            onSubmit={async (values, {setSubmitting}) => {
-              try {
-                alert(JSON.stringify(values));
-                navigation.navigate('Login');
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setSubmitting(false);
-              }
-            }}>
-            {({
-              errors,
-              touched,
-              values,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,
-            }) => (
-              <Flex alignItems="center">
-                <FormControl>
-                  <FormStack space={1} justifyContent="center">
-                    <FormStack>
-                      <Input
-                        type="text"
-                        variant="outline"
-                        pt={3}
-                        pl={5}
-                        pb={3}
-                        placeholder={'Email'}
-                        value={values.email}
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
-                        fontSize={20}
-                        borderColor={
-                          errors.email && touched.email ? 'red.600' : 'gray.300'
-                        }
-                      />
-                      <Text>
-                        {errors.email && touched.email && (
-                          <Text style={{color: 'red', fontSize: 15}}>
-                            {errors.email}
-                          </Text>
-                        )}
-                      </Text>
-                    </FormStack>
-                    <FormStack>
-                      <Input
-                        type="password"
-                        variant="outline"
-                        pt={3}
-                        pl={5}
-                        pb={3}
-                        placeholder={'Password'}
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        fontSize={20}
-                        borderColor={
-                          errors.password && touched.password
-                            ? 'red.600'
-                            : 'gray.300'
-                        }
-                      />
-                      <Text>
-                        {errors.password && touched.password && (
-                          <Text style={{color: 'red', fontSize: 15}}>
-                            {errors.password}
-                          </Text>
-                        )}
-                      </Text>
-                    </FormStack>
-                    <Button
-                      block
-                      large
-                      disabled={isSubmitting}
-                      onPress={() => {
-                        handleSubmit();
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 30,
-                          fontWeight: 'bold',
-                        }}>
-                        Login
-                      </Text>
-                    </Button>
-                  </FormStack>
-                </FormControl>
-              </Flex>
-            )}
-          </Formik>
-        </Box>
-      </Container>
-      <View
-        style={{
-          alignItems: 'center',
-          bottom: 10,
+    <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
+      <Formik
+        //the starting value
+        initialValues={{
+          name: profile.name,
+          genre: profile.genre,
+          bio: profile.bio,
+          picture: profile.picture,
+        }}
+        //onsubmitting the form alert, later firebase
+        onSubmit={async (values, {setSubmitting}) => {
+          try {
+            onSubmit(values);
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setSubmitting(false);
+          }
         }}>
-        <Text style={{fontSize: 16, textAlign: 'center', color: 'grey'}}>
-          Don't have an account?
-        </Text>
-      </View>
+        {({
+          errors,
+          touched,
+          values,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+        }) => (
+          <View
+            style={{
+              flex: 1,
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Row>
+              <Image
+                source={values.picture}
+                alt="Profile Picture"
+                size="xl"
+                borderRadius={10}
+              />
+              <Icon
+                name="camera-reverse"
+                type="ionicon"
+                size={30}
+                color="black"
+                style={{marginLeft: 10}}
+                onPress={() => {
+                  alert('change picture'); // To Image Picker
+                }}
+              />
+            </Row>
+            <FormControl>
+              <FormStack space={1} justifyContent="center" ml={2} mr={2} mt={5}>
+                <FormStack>
+                  <Input
+                    width="100%"
+                    type="text"
+                    variant="outline"
+                    pt={3}
+                    pl={5}
+                    pb={3}
+                    placeholder={'Name'}
+                    value={values.name}
+                    onChangeText={handleChange('name')}
+                    onBlur={handleBlur('name')}
+                    fontSize={20}
+                    borderColor={
+                      errors.name && touched.name ? 'red.600' : 'gray.300'
+                    }
+                    onChange={() => {
+                      handleSubmit();
+                    }}
+                  />
+                  <Text>
+                    {errors.name && touched.name && (
+                      <Text style={{color: 'red', fontSize: 15}}>
+                        {errors.name}
+                      </Text>
+                    )}
+                  </Text>
+                  <TextArea
+                    width="100%"
+                    numberOfLines={3}
+                    type="text"
+                    variant="outline"
+                    pt={3}
+                    pl={5}
+                    pb={3}
+                    placeholder={'Genre'}
+                    value={values.genre}
+                    onChangeText={handleChange('genre')}
+                    onBlur={handleBlur('genre')}
+                    fontSize={20}
+                    borderColor={
+                      errors.genre && touched.genre ? 'red.600' : 'gray.300'
+                    }
+                    onChange={() => {
+                      handleSubmit();
+                    }}
+                  />
+                  <Text>
+                    {errors.genre && touched.genre && (
+                      <Text style={{color: 'red', fontSize: 15}}>
+                        {errors.genre}
+                      </Text>
+                    )}
+                  </Text>
+                  <TextArea
+                    width="100%"
+                    numberOfLines={3}
+                    type="text"
+                    variant="outline"
+                    pt={3}
+                    pl={5}
+                    pb={3}
+                    placeholder={'Bio'}
+                    value={values.bio}
+                    onChangeText={handleChange('bio')}
+                    onBlur={handleBlur('bio')}
+                    fontSize={20}
+                    borderColor={
+                      errors.bio && touched.bio ? 'red.600' : 'gray.300'
+                    }
+                    onChange={() => {
+                      handleSubmit();
+                    }}
+                  />
+                  <Text>
+                    {errors.bio && touched.bio && (
+                      <Text style={{color: 'red', fontSize: 15}}>
+                        {errors.bio}
+                      </Text>
+                    )}
+                  </Text>
+                </FormStack>
+              </FormStack>
+            </FormControl>
+          </View>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 };
@@ -225,7 +268,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
     });
   }, []);
 
-  let testId = 2;
+  let testId = 1;
 
   const [profile, setProfile] = useState(getOneProfile(testId));
 
@@ -310,6 +353,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
       <View
         style={{
           alignItems: 'center',
+          bottom: 2,
         }}>
         <Text>
           <Text style={{fontSize: 10, textAlign: 'center', color: 'grey'}}>
@@ -322,7 +366,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
                 'https://github.com/MintedKitten/ReadMe/tree/main/Documents',
               );
             }}>
-            Term of Service, Privacy Policy, and Cookie Policy
+            Read me of Read me GitHub Page
           </Text>
         </Text>
       </View>
@@ -341,7 +385,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('search');
+              alert('search'); //
             }}
           />
           {'   '}
@@ -351,7 +395,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('hey');
+              alert('hey'); //
             }}
           />
           {'   '}
@@ -361,7 +405,16 @@ const InformationPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('add book');
+              setToOverlay({
+                id: null,
+                name: '',
+                author: '',
+                page: '',
+                summary: '',
+                genre: '',
+                picture: require('./assets/dummy_book.png'),
+              });
+              toggleOverlay();
             }}
           />
           {'   '}
@@ -371,7 +424,8 @@ const InformationPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('delete book');
+              setIsRemoving(!isRemoving);
+              forceUpdate();
             }}
           />
         </Text>
@@ -385,8 +439,18 @@ const InformationPage = ({navigation}, forceUpdate) => {
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});
+  let submitted = {
+    id: toOverlay.id,
+    name: toOverlay.book,
+    author: toOverlay.author,
+    page: toOverlay.page,
+    summary: toOverlay.summary,
+    genre: toOverlay.genre,
+    picture: toOverlay.picture,
+  };
   const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
@@ -402,6 +466,68 @@ const InformationPage = ({navigation}, forceUpdate) => {
 
   const _onRefresh = () => {
     getData();
+  };
+
+  const showConfirmDialog = () => {
+    return Alert.alert(
+      'Are your sure?',
+      'Are you sure you want to remove this beautiful box?',
+      [
+        // The "Yes" button
+        {
+          text: 'Yes',
+          onPress: () => {
+            setShowBox(false);
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: 'No',
+        },
+      ],
+    );
+  };
+
+  const removeBookIcon = item => {
+    return (
+      <Icon
+        name="book-off"
+        type="material-community"
+        onPress={() => {
+          setToOverlay(getOneBookInformation(item.id));
+          toggleOverlay();
+        }}
+      />
+    );
+  };
+
+  const editBookIcon = item => {
+    return (
+      <Icon
+        name="more"
+        type="material"
+        onPress={() => {
+          setToOverlay(getOneBookInformation(item.id));
+          toggleOverlay();
+        }}
+      />
+    );
+  };
+
+  const onSubmit = () => {
+    let tempChange = {
+      // If any field is emtpy, the default value is used
+      id: submitted.id, // Will later be split
+      name: submitted.book,
+      author: submitted.author,
+      page: isNaN(submitted.page) ? 0 : submitted.page < 0 ? 0 : submitted.page,
+      summary: submitted.summary,
+      genre: submitted.genre,
+      picture: submitted.picture,
+      lastedit: new Date().toISOString(),
+    };
+    alert(JSON.stringify(tempChange)); // To change Book Information
   };
 
   return (
@@ -428,7 +554,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                   <Flex direction="row" safeAreaTop mx={1}>
                     <Center>
                       <Image
-                        source={{uri: item.picture.src}}
+                        source={item.picture}
                         alt={item.name}
                         size="md"
                         borderRadius={10}
@@ -471,19 +597,96 @@ const InformationPage = ({navigation}, forceUpdate) => {
           onBackdropPress={() => {
             toggleOverlay();
           }}>
-          <View>
-            <Text>This is an Overlay for History: </Text>
-            <Text>{JSON.stringify(toOverlay)}</Text>
-            <Icon
-              name="book-check"
-              type="material-community"
-              size={20}
-              color="black"
-              style={{}}
-              onPress={() => {
-                toggleOverlay();
-              }}
-            />
+          <View style={{width: '90%', borderRadius: 50}}>
+            <Row>
+              <Image
+                source={toOverlay.picture}
+                alt={toOverlay.name === '' ? 'No Image' : toOverlay.name}
+                size="xl"
+                borderRadius={10}
+              />
+              <Column style={{marginLeft: 10}}>
+                <Input
+                  fontSize={20}
+                  defaultValue={toOverlay.name}
+                  placeholder="Book Name"
+                />
+                <Row>
+                  <Icon
+                    name="camera-reverse"
+                    type="ionicon"
+                    size={30}
+                    color="black"
+                    onPress={() => {
+                      alert('select picture'); // To Select Image Picker
+                    }}
+                  />
+                  <Spacer />
+                </Row>
+              </Column>
+            </Row>
+            <View style={{marginTop: 10}}>
+              <Row>
+                <Text>By : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.author}
+                  placeholder="author"
+                  onChangeText={author => {
+                    submitted.author = author;
+                  }}
+                />
+              </Row>
+              <Row>
+                <Text>Page : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.page}
+                  placeholder="page"
+                  onChangeText={page => {
+                    submitted.page = page;
+                  }}
+                />
+              </Row>
+              <Row>
+                <Text>Summary : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.summary}
+                  placeholder="summary"
+                  onChangeText={summary => {
+                    submitted.summary = summary;
+                  }}
+                />
+              </Row>
+              <Row>
+                <Text>Genre : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.genre}
+                  placeholder="genre"
+                  onChangeText={genre => {
+                    submitted.genre = genre;
+                  }}
+                />
+              </Row>
+            </View>
+            <Row style={{flexDirection: 'row-reverse'}}>
+              <Icon
+                name="book-check"
+                type="material-community"
+                size={20}
+                color="black"
+                onPress={() => {
+                  onSubmit();
+                  toggleOverlay();
+                }}
+              />
+            </Row>
           </View>
         </Overlay>
       </View>
@@ -501,7 +704,7 @@ const testBookInformation = [
     summary: 'Outer Space Cadeting',
     genre: 'Sci-fi, Romance',
     picture: {
-      src: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy.png?alt=media&token=232056d1-7f3b-4d38-ad49-8634858ec228',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v1.png?alt=media&token=9a331dec-d288-4e4d-83a6-4729f6829f84',
     },
     lastedit: new Date().toISOString(),
   },
@@ -513,7 +716,7 @@ const testBookInformation = [
     summary: 'History of Japan',
     genre: 'Asia History',
     picture: {
-      src: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_v1.png?alt=media&token=fe80da21-76ad-47ae-b0f5-c782f9fea4fb',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v2.png?alt=media&token=d4832dd3-1a3e-45fa-b2ca-6bbe66cbda5b',
     },
     lastedit: new Date().toISOString(),
   },
@@ -525,7 +728,7 @@ const testBookInformation = [
     summary: 'How to Fish Like a Pro',
     genre: 'Guide, Life Hack',
     picture: {
-      src: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_v2.png?alt=media&token=e527dbb1-0fe6-40fb-b5e0-f3f5e478ee61',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v3.png?alt=media&token=cfc44a44-36b7-43d4-a210-b3489c02747b',
     },
     lastedit: new Date().toISOString(),
   },
@@ -600,7 +803,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('search');
+              alert('search'); //
             }}
           />
           {'   '}
@@ -610,7 +813,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert('favorite');
+              alert('favorite'); //
             }}
           />
         </Text>
@@ -624,6 +827,11 @@ const HistoryPage = ({navigation}, forceUpdate) => {
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});
+  let submitted = {
+    status: toOverlay.status,
+    pageread: toOverlay.pageread,
+    rating: toOverlay.rating,
+  };
   const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -641,6 +849,24 @@ const HistoryPage = ({navigation}, forceUpdate) => {
 
   const _onRefresh = () => {
     getData();
+  };
+
+  const onSubmit = () => {
+    let tempChange = {
+      id: toOverlay.id, // Will later be split
+      bookid: toOverlay.bookid, // NotChanging
+      status: submitted.status == '' ? 'None' : submitted.status,
+      pageread:
+        submitted.pageread > toOverlay.page
+          ? toOverlay.page
+          : submitted.pageread < 0
+          ? 0
+          : submitted.pageread,
+      rating:
+        submitted.rating > 5 ? 5 : submitted.rating < 0 ? 0 : submitted.rating,
+      lastedit: new Date().toISOString(),
+    };
+    alert(JSON.stringify(tempChange)); // To Edit history Function
   };
 
   return (
@@ -667,7 +893,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                   <Flex direction="row" safeAreaTop mx={1}>
                     <Center>
                       <Image
-                        source={{uri: item.picture.src}}
+                        source={item.picture}
                         alt={item.name}
                         size="md"
                         borderRadius={10}
@@ -715,19 +941,75 @@ const HistoryPage = ({navigation}, forceUpdate) => {
           onBackdropPress={() => {
             toggleOverlay();
           }}>
-          <View>
-            <Text>This is an Overlay for History: </Text>
-            <Text>{JSON.stringify(toOverlay)}</Text>
-            <Icon
-              name="book-check"
-              type="material-community"
-              size={20}
-              color="black"
-              style={{}}
-              onPress={() => {
-                toggleOverlay();
-              }}
-            />
+          <View style={{width: '90%', borderRadius: 50}}>
+            <Row>
+              <Image
+                source={toOverlay.picture}
+                alt={toOverlay.name}
+                size="xl"
+                borderRadius={10}
+              />
+              <Heading mx={4}>{toOverlay.name}</Heading>
+            </Row>
+            <View style={{marginTop: 10}}>
+              <Row>
+                <Text>Status : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.status}
+                  placeholder="Status"
+                  onChangeText={status => {
+                    submitted.status = status;
+                  }}
+                />
+              </Row>
+              <Row>
+                <Text>Page Read : </Text>
+                <Input
+                  variant="outline"
+                  p={0}
+                  defaultValue={'' + toOverlay.pageread}
+                  placeholder="0"
+                  onChangeText={pageread => {
+                    submitted.pageread = pageread;
+                  }}
+                />
+                <Spacer />
+                <Text
+                  style={{
+                    flexDirection: 'row-reverse',
+                    justifyContent: 'flex-end',
+                  }}>
+                  Out of {toOverlay.page}
+                </Text>
+              </Row>
+            </View>
+            <Spacer />
+            <Row style={{flexDirection: 'row'}}>
+              <Text>Star : </Text>
+              <Input
+                variant="outline"
+                p={0}
+                defaultValue={'' + toOverlay.rating}
+                placeholder="0-5"
+                onChangeText={rating => {
+                  submitted.rating = rating;
+                }}
+              />
+            </Row>
+            <Row style={{flexDirection: 'row-reverse'}}>
+              <Icon
+                name="book-check"
+                type="material-community"
+                size={20}
+                color="black"
+                onPress={() => {
+                  onSubmit();
+                  toggleOverlay();
+                }}
+              />
+            </Row>
           </View>
         </Overlay>
       </View>
@@ -771,7 +1053,7 @@ const RegisterPage = ({navigation}) => {
               //onsubmitting the form alert, later firebase
               onSubmit={async (values, {setSubmitting}) => {
                 try {
-                  alert(JSON.stringify(values));
+                  alert(JSON.stringify(values)); // To Registering Function
                   navigation.navigate('Login');
                 } catch (error) {
                   console.log(error);
@@ -956,7 +1238,7 @@ const LoginPage = ({navigation}) => {
               //onsubmitting the form alert, later firebase
               onSubmit={async (values, {setSubmitting}) => {
                 try {
-                  alert(JSON.stringify(values));
+                  alert(JSON.stringify(values)); // To Login Function
                   navigation.navigate('Login');
                 } catch (error) {
                   console.log(error);
