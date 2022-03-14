@@ -891,7 +891,9 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                         defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
-                    <Column mx={4} style={{justifyContent: 'space-between'}}>
+                    <Column
+                      mx={4}
+                      style={{justifyContent: 'space-between', width: '65%'}}>
                       <Column>
                         <Heading>{item.name}</Heading>
                         <Text>{item.status}</Text>
