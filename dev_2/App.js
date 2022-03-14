@@ -1371,7 +1371,7 @@ const ProfileStack = forceUpdate => {
     <Stack.Navigator
       initialRouteName="Profile"
       screenOptions={{
-        headerStyle: {backgroundColor: '#0db1ff'},
+        headerStyle: {backgroundColor: '#09c1f8'},
         headerTintColor: '00FFDD',
         headerBackTitle: 'Back',
       }}>
@@ -1554,7 +1554,7 @@ const LoginNavigationStack = ({forceUpdate}) => {
       <Stack.Navigator
         initialRouteName="Login"
         screenOptions={{
-          headerStyle: {backgroundColor: '#2FA4FF'},
+          headerStyle: {backgroundColor: '#09c1f8'},
           headerTintColor: '00FFDD',
           headerBackTitle: 'Back',
         }}>
@@ -1584,21 +1584,12 @@ const TryLogin = token => {
 };
 
 const NavigationComponent = () => {
-  const [up, setUp] = useState(
-    <LoginNavigationStack
-      forceUpdate={() => {
-        forceUpdate();
-      }}
-    />,
-  );
   const [update, setUpdate] = useState(0);
   const forceUpdate = () => {
     setUpdate(update + 1);
-    console.log('update!');
   };
-  const [lock, setLock] = useState(false);
-  if (!lock) {
-    console.log('check nav');
+  const [unlock, setUnlock] = useState(true);
+  if (unlock) {
     const getItem = async () => {
       return await AsyncStorage.getItem('@session');
     };
@@ -1606,16 +1597,28 @@ const NavigationComponent = () => {
       let session = JSON.parse(value);
       if (session.token.length > 0) {
         if (TryLogin(session.token)) {
-          setLock(true);
-          setUp(<AppNavigationTab />);
+          setUnlock(false);
         } else {
           AsyncStorage.removeItem('@session');
+          return;
         }
       }
     });
+    return (
+      <NativeBaseProvider>
+        <LoginNavigationStack
+          forceUpdate={() => {
+            forceUpdate();
+          }}
+        />
+      </NativeBaseProvider>
+    );
   }
-
-  return <NativeBaseProvider>{up}</NativeBaseProvider>;
+  return (
+    <NativeBaseProvider>
+      <AppNavigationTab />
+    </NativeBaseProvider>
+  );
 };
 
 const App = () => {
