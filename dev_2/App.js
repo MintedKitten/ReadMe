@@ -51,18 +51,14 @@ const testProfile = [
     name: 'John Deere',
     genre: 'Sci-fi, Walking on the beach, and comedy',
     bio: 'Just doing fine in the pandemic',
-    picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v1.png?alt=media&token=9a331dec-d288-4e4d-83a6-4729f6829f84',
-    },
+    picture: require('./assets/profile_dummy.jpg'),
   },
   {
     id: 2,
-    name: 'Tim Dolly',
+    name: 'Mary Jane',
     genre: 'Romance, Walking on the beach, and Science',
-    bio: 'Having a lovely',
-    picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v2.png?alt=media&token=d4832dd3-1a3e-45fa-b2ca-6bbe66cbda5b',
-    },
+    bio: 'Having a lovely day',
+    picture: require('./assets/profile_female.jpg'),
   },
 ];
 
@@ -157,6 +153,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
                 size="xl"
                 borderRadius={10}
                 defaultSource={require('./assets/dummy_book.png')}
+                style={{borderRadius: 80}}
               />
               <Icon
                 name="camera-reverse"
@@ -201,33 +198,8 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
                       </Text>
                     )}
                   </Text>
-                  <TextArea
-                    width="100%"
-                    numberOfLines={3}
-                    type="text"
-                    variant="outline"
-                    pt={3}
-                    pl={5}
-                    pb={3}
-                    placeholder={'Genre'}
-                    value={values.genre}
-                    onChangeText={handleChange('genre')}
-                    onBlur={handleBlur('genre')}
-                    fontSize={20}
-                    borderColor={
-                      errors.genre && touched.genre ? 'red.600' : 'gray.300'
-                    }
-                    onChange={() => {
-                      handleSubmit();
-                    }}
-                  />
-                  <Text>
-                    {errors.genre && touched.genre && (
-                      <Text style={{color: 'red', fontSize: 15}}>
-                        {errors.genre}
-                      </Text>
-                    )}
-                  </Text>
+                </FormStack>
+                <FormStack>
                   <TextArea
                     width="100%"
                     numberOfLines={3}
@@ -252,6 +224,35 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
                     {errors.bio && touched.bio && (
                       <Text style={{color: 'red', fontSize: 15}}>
                         {errors.bio}
+                      </Text>
+                    )}
+                  </Text>
+                </FormStack>
+                <FormStack>
+                  <TextArea
+                    width="100%"
+                    numberOfLines={3}
+                    type="text"
+                    variant="outline"
+                    pt={3}
+                    pl={5}
+                    pb={3}
+                    placeholder={'Genre'}
+                    value={values.genre}
+                    onChangeText={handleChange('genre')}
+                    onBlur={handleBlur('genre')}
+                    fontSize={20}
+                    borderColor={
+                      errors.genre && touched.genre ? 'red.600' : 'gray.300'
+                    }
+                    onChange={() => {
+                      handleSubmit();
+                    }}
+                  />
+                  <Text>
+                    {errors.genre && touched.genre && (
+                      <Text style={{color: 'red', fontSize: 15}}>
+                        {errors.genre}
                       </Text>
                     )}
                   </Text>
@@ -284,7 +285,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
     });
   }, []);
 
-  let testId = 1;
+  let testId = 2;
 
   const [profile, setProfile] = useState(getOneProfile(testId));
 
@@ -296,20 +297,21 @@ const ProfilePage = ({navigation}, forceUpdate) => {
           width: '100%',
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: '#0db1ff',
         }}>
         <Image
           source={profile.picture}
           alt="Profile Picture"
           size="xl"
-          borderRadius={10}
-          defaultSource={require('./assets/dummy_book.png')}
+          defaultSource={require('./assets/profile_dummy.jpg')}
+          style={{borderWidth: 2, borderColor: 'white', borderRadius: 80}}
         />
         <Heading
           width="80%"
-          fontSize={40}
           mb={2}
-          fontWeight="extrabold"
-          textAlign="center">
+          fontWeight="bold"
+          textAlign="center"
+          style={{marginTop: 30, fontSize: 28, color: 'white'}}>
           {profile.name}
         </Heading>
       </View>
@@ -318,8 +320,31 @@ const ProfilePage = ({navigation}, forceUpdate) => {
           flex: 1,
           width: '100%',
           alignItems: 'center',
+          marginTop: 30,
         }}>
         <Text style={{width: '80%', marginTop: 10}}>
+          <Heading
+            fontSize={20}
+            mb={2}
+            fontWeight="medium"
+            style={{
+              justifyContent: 'center',
+              textAlign: 'justify',
+            }}>
+            {'About me : '}
+          </Heading>
+          <Heading
+            fontSize={20}
+            mb={2}
+            style={{
+              justifyContent: 'center',
+              textAlign: 'justify',
+              fontWeight: '300',
+            }}>
+            {profile.bio}
+          </Heading>
+        </Text>
+        <Text style={{width: '80%', marginTop: 20}}>
           <Heading
             flex="1"
             fontSize={20}
@@ -330,7 +355,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
               alignItems: 'center',
               textAlign: 'center',
             }}>
-            {'Genre : '}
+            {'Interests : '}
           </Heading>
           <Heading
             flex="5"
@@ -340,30 +365,9 @@ const ProfilePage = ({navigation}, forceUpdate) => {
             style={{
               justifyContent: 'center',
               textAlign: 'center',
+              fontWeight: '300',
             }}>
             {profile.genre}
-          </Heading>
-        </Text>
-        <Text style={{width: '80%', marginTop: 10}}>
-          <Heading
-            fontSize={20}
-            mb={2}
-            fontWeight="medium"
-            style={{
-              justifyContent: 'center',
-              textAlign: 'justify',
-            }}>
-            {'Bio : '}
-          </Heading>
-          <Heading
-            fontSize={20}
-            mb={2}
-            fontWeight="medium"
-            style={{
-              justifyContent: 'center',
-              textAlign: 'justify',
-            }}>
-            {profile.bio}
           </Heading>
         </Text>
       </View>
@@ -527,7 +531,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
           renderItem={({item, index}) => (
             <Box flex="1" safeAreaTop>
               <ScrollView>
-                <Column my={1}>
+                <Column my={4}>
                   <Flex direction="row" mx={1} width="100%">
                     <Center>
                       <Image
@@ -538,17 +542,21 @@ const InformationPage = ({navigation}, forceUpdate) => {
                         defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
-                    <Column mx={2} width="68%">
+                    <Column mx={2} style={{width: '68%'}}>
                       <Heading>{item.name}</Heading>
+                      <Text style={{fontWeight: '700'}}>
+                        <Text>{'By '}</Text>
+                        <Text>{item.author}</Text>
+                      </Text>
+                      <Text style={{fontWeight: '600'}}>
+                        <Text>{item.page}</Text>
+                        <Text>{' Pages'}</Text>
+                      </Text>
+                      <Text style={{fontWeight: '600'}}>
+                        <Text>{item.genre}</Text>
+                      </Text>
                       <Text>
-                        {'By ' +
-                          item.author +
-                          '\n' +
-                          item.page +
-                          ' Pages\n' +
-                          item.summary +
-                          '\n' +
-                          item.genre}
+                        <Text>{item.summary}</Text>
                       </Text>
                     </Column>
                     <Column>
@@ -754,7 +762,7 @@ const testHistory = [
     bookid: 3,
     status: 'Hold',
     pageread: 125,
-    rating: 4.2,
+    rating: 2.5,
     lastedit: new Date().toISOString(),
   },
 ];
@@ -872,7 +880,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
           renderItem={({item, index}) => (
             <Box flex="1" safeAreaTop>
               <ScrollView>
-                <Column my={1}>
+                <Column my={4}>
                   <Flex direction="row" safeAreaTop mx={1}>
                     <Center>
                       <Image
@@ -883,7 +891,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                         defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
-                    <Column mx={4} justifyContent="space-between">
+                    <Column mx={4} style={{justifyContent: 'space-between'}}>
                       <Column>
                         <Heading>{item.name}</Heading>
                         <Text>{item.status}</Text>
@@ -1363,7 +1371,7 @@ const ProfileStack = forceUpdate => {
     <Stack.Navigator
       initialRouteName="Profile"
       screenOptions={{
-        headerStyle: {backgroundColor: '#2FA4FF'},
+        headerStyle: {backgroundColor: '#0db1ff'},
         headerTintColor: '00FFDD',
         headerBackTitle: 'Back',
       }}>
@@ -1510,7 +1518,7 @@ const AppNavigationTab = () => {
         activeColor="#ffffff"
         inactiveColor="#0E185F"
         keyboardHidesNavigationBar={true}
-        barStyle={{paddingBottom: 0, backgroundColor: '#2FA4FF'}}>
+        barStyle={{paddingBottom: 0, backgroundColor: '#0db1ff'}}>
         <Tab.Screen
           name="HistoryStack"
           options={{
