@@ -6,6 +6,7 @@ import {
   View,
   Text,
   Linking,
+  Alert,
   TextInput,
 } from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
@@ -36,6 +37,8 @@ import {
 import {AirbnbRating} from 'react-native-ratings';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
@@ -67,6 +70,13 @@ const getOneProfile = id => {
   return testProfile.find(profile => profile.id === id);
 };
 
+const TryEditProfile = (id, value) => {
+  // Attempt to edit book history failed return false and alert, otherwise true
+  console.log(id, value);
+
+  return true;
+};
+
 const EditProfilePage = ({navigation, route}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -78,8 +88,9 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              alert(JSON.stringify(submitted)); // To Change Profile Function
-              navigation.navigate('Profile');
+              if (TryEditProfile(route.params.id, submitted)) {
+                navigation.navigate('Profile');
+              }
             }}
           />
         </Text>
@@ -97,7 +108,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
   });
 
   const [profile, setProfile] = useState(getOneProfile(profileId));
-  let submitted = {};
+  let submitted = profile;
 
   const onSubmit = value => {
     submitted = value;
@@ -106,6 +117,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
   return (
     <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
       <Formik
+        validateSchema={validateSchema}
         //the starting value
         initialValues={{
           name: profile.name,
@@ -152,8 +164,11 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
                 size={30}
                 color="black"
                 style={{marginLeft: 10}}
-                onPress={() => {
-                  alert('change picture'); // To Image Picker
+                onPress={async () => {
+                  const result = await launchImageLibrary({mediaType: 'photo'});
+                  if (!result.didCancel) {
+                    console.log(result.assets);
+                  }
                 }}
               />
             </Row>
@@ -376,31 +391,30 @@ const ProfilePage = ({navigation}, forceUpdate) => {
   );
 };
 
+const TryRemoveBook = id => {
+  // Attempt to edit book history failed return false and alert, otherwise true
+  console.log(id);
+
+  return true;
+};
+
+const TryAddBook = values => {
+  // Attempt to edit book history failed return false and alert, otherwise true
+  return true;
+};
+
+const TryEditInformation = (id, values) => {
+  // Attempt to edit book history failed return false and alert, otherwise true
+  console.log(id, values);
+
+  return true;
+};
+
 const InformationPage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Text>
-          <Icon
-            name="search-outline"
-            type="ionicon"
-            size={20}
-            color="white"
-            onPress={() => {
-              alert('search'); //
-            }}
-          />
-          {'   '}
-          <Icon
-            name="heart"
-            type="ionicon"
-            size={20}
-            color="white"
-            onPress={() => {
-              alert('hey'); //
-            }}
-          />
-          {'   '}
           <Icon
             name="book-plus"
             type="material-community"
@@ -417,17 +431,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 picture: require('./assets/dummy_book.png'),
               });
               toggleOverlay();
-            }}
-          />
-          {'   '}
-          <Icon
-            name="book-remove"
-            type="material-community"
-            size={20}
-            color="white"
-            onPress={() => {
-              setIsRemoving(!isRemoving);
-              forceUpdate();
             }}
           />
         </Text>
@@ -452,14 +455,13 @@ const InformationPage = ({navigation}, forceUpdate) => {
   };
   const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
     forceUpdate();
   };
 
-  const getData = async () => {
+  const getData = () => {
     setLoading(true);
     setDetails(getBookInformation());
     setLoading(false);
@@ -470,8 +472,8 @@ const InformationPage = ({navigation}, forceUpdate) => {
     getData();
   };
 
-  const showConfirmDialog = () => {
-    return Alert.alert(
+  const showConfirmDialog = id => {
+    Alert.alert(
       'Are your sure?',
       'Are you sure you want to remove this beautiful box?',
       [
@@ -479,7 +481,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
         {
           text: 'Yes',
           onPress: () => {
-            setShowBox(false);
+            TryRemoveBook(id);
           },
         },
         // The "No" button
@@ -491,45 +493,18 @@ const InformationPage = ({navigation}, forceUpdate) => {
     );
   };
 
-  const removeBookIcon = item => {
-    return (
-      <Icon
-        name="book-off"
-        type="material-community"
-        onPress={() => {
-          setToOverlay(getOneBookInformation(item.id));
-          toggleOverlay();
-        }}
-      />
-    );
-  };
-
-  const editBookIcon = item => {
-    return (
-      <Icon
-        name="more"
-        type="material"
-        onPress={() => {
-          setToOverlay(getOneBookInformation(item.id));
-          toggleOverlay();
-        }}
-      />
-    );
-  };
-
   const onSubmit = () => {
     let tempChange = {
       // If any field is emtpy, the default value is used
-      id: submitted.id, // Will later be split
-      name: submitted.book,
-      author: submitted.author,
+      name: submitted.book != '' ? submitted.book : '',
+      author: submitted.author != '' ? submitted.author : '',
       page: isNaN(submitted.page) ? 0 : submitted.page < 0 ? 0 : submitted.page,
-      summary: submitted.summary,
-      genre: submitted.genre,
+      summary: submitted.summary != '' ? submitted.summary : '',
+      genre: submitted.genre != '' ? submitted.genre : '',
       picture: submitted.picture,
       lastedit: new Date().toISOString(),
     };
-    alert(JSON.stringify(tempChange)); // To change Book Information
+    TryEditHistory(submitted.id, tempChange);
   };
 
   return (
@@ -553,7 +528,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
             <Box flex="1" safeAreaTop>
               <ScrollView>
                 <Column my={1}>
-                  <Flex direction="row" safeAreaTop mx={1}>
+                  <Flex direction="row" mx={1} width="100%">
                     <Center>
                       <Image
                         source={item.picture}
@@ -563,7 +538,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                         defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
-                    <Column mx={4}>
+                    <Column mx={2} width="68%">
                       <Heading>{item.name}</Heading>
                       <Text>
                         {'By ' +
@@ -576,15 +551,23 @@ const InformationPage = ({navigation}, forceUpdate) => {
                           item.genre}
                       </Text>
                     </Column>
-                    <Spacer />
                     <Column>
-                      <Flex alignItems="flex-end" mr={1}>
+                      <Flex mr={1}>
                         <Icon
                           name="more"
                           type="material"
                           onPress={() => {
                             setToOverlay(getOneBookInformation(item.id));
                             toggleOverlay();
+                          }}
+                        />
+                        <Icon
+                          name="book-off"
+                          type="material-community"
+                          onPress={() => {
+                            if (showConfirmDialog(item.id)) {
+                              forceUpdate();
+                            }
                           }}
                         />
                       </Flex>
@@ -600,7 +583,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
           onBackdropPress={() => {
             toggleOverlay();
           }}>
-          <View style={{width: '90%', borderRadius: 50}}>
+          <View style={{width: '70%'}}>
             <Row>
               <Image
                 source={toOverlay.picture}
@@ -621,8 +604,13 @@ const InformationPage = ({navigation}, forceUpdate) => {
                     type="ionicon"
                     size={30}
                     color="black"
-                    onPress={() => {
-                      alert('select picture'); // To Select Image Picker
+                    onPress={async () => {
+                      const result = await launchImageLibrary({
+                        mediaType: 'photo',
+                      });
+                      if (!result.didCancel) {
+                        console.log(result.assets);
+                      }
                     }}
                   />
                   <Spacer />
@@ -655,16 +643,18 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 />
               </Row>
               <Row>
-                <Text>Summary : </Text>
-                <Input
-                  variant="outline"
-                  p={0}
-                  defaultValue={'' + toOverlay.summary}
-                  placeholder="summary"
-                  onChangeText={summary => {
-                    submitted.summary = summary;
-                  }}
-                />
+                <Flex style={{flexDirection: 'column'}}>
+                  <Text>Summary : </Text>
+                  <TextInput
+                    multiline={true}
+                    defaultValue={'' + toOverlay.summary}
+                    placeholder="summary"
+                    // style={{textAlignVertical: 'top'}}
+                    onChangeText={summary => {
+                      submitted.summary = summary;
+                    }}
+                  />
+                </Flex>
               </Row>
               <Row>
                 <Text>Genre : </Text>
@@ -698,41 +688,44 @@ const InformationPage = ({navigation}, forceUpdate) => {
   );
 };
 
-// id, name, author, genre, picture, favorite
+// id, name, author, genre, summary, picture
 const testBookInformation = [
   {
     id: 1,
-    name: 'Book 1',
-    author: 'John Smith',
-    page: 168,
-    summary: 'Outer Space Cadeting',
-    genre: 'Sci-fi, Romance',
+    name: 'The Lord of the Rings',
+    author: 'J.R.R. Tolkien',
+    page: 1216,
+    summary:
+      'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them',
+    genre: 'Fantasy',
     picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v1.png?alt=media&token=9a331dec-d288-4e4d-83a6-4729f6829f84',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Flotr1.jpg?alt=media&token=eb6349e5-588b-442a-8a14-2ef0e91e2eb9',
     },
     lastedit: new Date().toISOString(),
   },
   {
     id: 2,
-    name: 'Book 2',
-    author: 'William Shakespeare',
-    page: 318,
-    summary: 'History of Japan',
-    genre: 'Asia History',
+    name: 'The Lightning Thief',
+    author: 'Rick Riordan',
+    page: 377,
+    summary:
+      'Twelve-year-old Percy Jackson is on the most dangerous quest of his life. With the help of a satyr and a daughter of Athena to catch a thief who has stolen the original weapon of mass destruction  Zeus’ master bolt',
+    genre: 'Fantasy',
     picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v2.png?alt=media&token=d4832dd3-1a3e-45fa-b2ca-6bbe66cbda5b',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fpercy_jackson_1.jpg?alt=media&token=365556f6-2519-41c6-94a4-146587500b64',
     },
     lastedit: new Date().toISOString(),
   },
   {
     id: 3,
-    name: 'Book 3',
-    author: 'Patiparn Techawatcharapaikul',
-    page: 169,
-    summary: 'How to Fish Like a Pro',
-    genre: 'Guide, Life Hack',
+    name: 'Dune',
+    author: 'Frank Herbert',
+    page: 687,
+    summary:
+      'Set on the desert planet Arrakis. Dune is the story of the boy Paul Atreides. heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the “spice” melange',
+    genre: 'Science fiction',
     picture: {
-      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book_v3.png?alt=media&token=cfc44a44-36b7-43d4-a210-b3489c02747b',
+      uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2F43419431.png?alt=media&token=99d6ab89-61a9-49e8-b17d-6e107288d830',
     },
     lastedit: new Date().toISOString(),
   },
@@ -744,24 +737,24 @@ const testHistory = [
     id: 1,
     bookid: 1,
     status: 'Complete',
-    pageread: 168,
-    rating: 3.5,
+    pageread: 1216,
+    rating: 4.5,
     lastedit: new Date().toISOString(),
   },
   {
     id: 2,
     bookid: 2,
     status: 'Reading',
-    pageread: 158,
-    rating: 4.1,
+    pageread: 152,
+    rating: 4.2,
     lastedit: new Date().toISOString(),
   },
   {
     id: 3,
     bookid: 3,
-    status: 'Dropped',
-    pageread: 102,
-    rating: 1,
+    status: 'Hold',
+    pageread: 125,
+    rating: 4.2,
     lastedit: new Date().toISOString(),
   },
 ];
@@ -796,35 +789,14 @@ const getOneReadingHistory = id => {
   return getReadingHistory().find(hist => hist.id === id);
 };
 
-const HistoryPage = ({navigation}, forceUpdate) => {
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Text>
-          <Icon
-            name="search-outline"
-            type="ionicon"
-            size={20}
-            color="white"
-            onPress={() => {
-              alert('search'); //
-            }}
-          />
-          {'   '}
-          <Icon
-            name="bookmark"
-            type="ionicon"
-            size={20}
-            color="white"
-            onPress={() => {
-              alert('favorite'); //
-            }}
-          />
-        </Text>
-      ),
-    });
-  }, []);
+const TryEditHistory = (id, values) => {
+  // Attempt to edit book history failed return false and alert, otherwise true
+  console.log(id, values);
 
+  return true;
+};
+
+const HistoryPage = ({navigation}, forceUpdate) => {
   useEffect(() => {
     getData();
   }, []);
@@ -844,7 +816,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
     forceUpdate();
   };
 
-  const getData = async () => {
+  const getData = () => {
     setLoading(true);
     setDetails(getReadingHistory());
     setLoading(false);
@@ -857,20 +829,27 @@ const HistoryPage = ({navigation}, forceUpdate) => {
 
   const onSubmit = () => {
     let tempChange = {
-      id: toOverlay.id, // Will later be split
       bookid: toOverlay.bookid, // NotChanging
       status: submitted.status == '' ? 'None' : submitted.status,
-      pageread:
-        submitted.pageread > toOverlay.page
-          ? toOverlay.page
-          : submitted.pageread < 0
-          ? 0
-          : submitted.pageread,
-      rating:
-        submitted.rating > 5 ? 5 : submitted.rating < 0 ? 0 : submitted.rating,
+      pageread: isNaN(submitted.pageread)
+        ? 0
+        : submitted.pageread > toOverlay.page
+        ? toOverlay.page
+        : submitted.pageread < 0
+        ? 0
+        : submitted.pageread,
+      rating: isNaN(submitted.rating)
+        ? 0
+        : submitted.rating > 5
+        ? 5
+        : submitted.rating < 0
+        ? 0
+        : submitted.rating,
       lastedit: new Date().toISOString(),
     };
-    alert(JSON.stringify(tempChange)); // To Edit history Function
+    if (TryEditHistory(toOverlay.id, tempChange)) {
+      forceUpdate();
+    }
   };
 
   return (
@@ -1023,6 +1002,13 @@ const HistoryPage = ({navigation}, forceUpdate) => {
   );
 };
 
+const TryRegistering = value => {
+  // Attempt to register if failed return false and display error, otherwise true
+  console.log(JSON.stringify(value));
+
+  return true;
+};
+
 const RegisterPage = ({navigation}) => {
   const validateSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -1059,8 +1045,10 @@ const RegisterPage = ({navigation}) => {
               //onsubmitting the form alert, later firebase
               onSubmit={async (values, {setSubmitting}) => {
                 try {
-                  alert(JSON.stringify(values)); // To Registering Function
-                  navigation.navigate('Login');
+                  // To Registering Function
+                  if (TryRegistering(values)) {
+                    navigation.navigate('Login');
+                  }
                 } catch (error) {
                   console.log(error);
                 } finally {
@@ -1210,14 +1198,21 @@ const RegisterPage = ({navigation}) => {
   );
 };
 
-const LoginPage = ({navigation}) => {
+const TryGetToken = value => {
+  const testtoken = {token: 'test_token'};
+  AsyncStorage.setItem('@session', JSON.stringify(testtoken));
+  console.log(JSON.stringify(value));
+
+  return true;
+};
+
+const LoginPage = ({navigation}, forceUpdate) => {
   const validateSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string()
       .min(8, 'Password must be at least 8 characters')
       .required('Password is required'),
   });
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <View
@@ -1244,8 +1239,9 @@ const LoginPage = ({navigation}) => {
               //onsubmitting the form alert, later firebase
               onSubmit={async (values, {setSubmitting}) => {
                 try {
-                  alert(JSON.stringify(values)); // To Login Function
-                  navigation.navigate('Login');
+                  if (TryGetToken(values)) {
+                    forceUpdate();
+                  }
                 } catch (error) {
                   console.log(error);
                 } finally {
@@ -1375,7 +1371,11 @@ const ProfileStack = forceUpdate => {
         name="Profile"
         options={{
           animation: 'slide_from_right',
-          headerTitle: () => <Text>Your Profile</Text>,
+          headerTitle: () => (
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
+              Your Profile
+            </Text>
+          ),
         }}>
         {({navigation}) => ProfilePage({navigation}, forceUpdate)}
       </Stack.Screen>
@@ -1384,8 +1384,11 @@ const ProfileStack = forceUpdate => {
         options={{
           animation: 'slide_from_bottom',
           headerBackVisible: false,
-          headerTitle: () => <Text>Edit Profile</Text>,
-          headerRight: () => <Text></Text>,
+          headerTitle: () => (
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
+              Edit Profile
+            </Text>
+          ),
         }}>
         {({navigation, route}) =>
           EditProfilePage({navigation, route}, forceUpdate)
@@ -1408,7 +1411,11 @@ const InformationStack = forceUpdate => {
         name="Information"
         options={{
           animation: 'slide_from_right',
-          headerTitle: () => <Text>Book Information</Text>,
+          headerTitle: () => (
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
+              Book Information
+            </Text>
+          ),
         }}>
         {({navigation}) => InformationPage({navigation}, forceUpdate)}
       </Stack.Screen>
@@ -1533,7 +1540,7 @@ const AppNavigationTab = () => {
   );
 };
 
-const LoginNavigationStack = () => {
+const LoginNavigationStack = ({forceUpdate}) => {
   return (
     <NavCon>
       <Stack.Navigator
@@ -1549,7 +1556,7 @@ const LoginNavigationStack = () => {
             animation: 'slide_from_left',
             headerShown: false,
           }}>
-          {({navigation}) => LoginPage({navigation})}
+          {({navigation}) => LoginPage({navigation}, forceUpdate)}
         </Stack.Screen>
         <Stack.Screen
           name="Register"
@@ -1561,17 +1568,46 @@ const LoginNavigationStack = () => {
   );
 };
 
-const NavigationComponent = () => {
-  const [session, setSession] = useState('test_token');
+const TryLogin = token => {
+  // Try get Data if failed return false, else true
+  console.log(token);
 
-  return (
-    // for testing Login First then App
-    <NativeBaseProvider>
-      {session.length > 0 ? <AppNavigationTab /> : <LoginNavigationStack />}
-    </NativeBaseProvider>
-    // <LoginNavigationStack />
-    // <AppNavigationTab />
+  return true;
+};
+
+const NavigationComponent = () => {
+  const [up, setUp] = useState(
+    <LoginNavigationStack
+      forceUpdate={() => {
+        forceUpdate();
+      }}
+    />,
   );
+  const [update, setUpdate] = useState(0);
+  const forceUpdate = () => {
+    setUpdate(update + 1);
+    console.log('update!');
+  };
+  const [lock, setLock] = useState(false);
+  if (!lock) {
+    console.log('check nav');
+    const getItem = async () => {
+      return await AsyncStorage.getItem('@session');
+    };
+    getItem().then(value => {
+      let session = JSON.parse(value);
+      if (session.token.length > 0) {
+        if (TryLogin(session.token)) {
+          setLock(true);
+          setUp(<AppNavigationTab />);
+        } else {
+          AsyncStorage.removeItem('@session');
+        }
+      }
+    });
+  }
+
+  return <NativeBaseProvider>{up}</NativeBaseProvider>;
 };
 
 const App = () => {
@@ -1580,6 +1616,26 @@ const App = () => {
       RNBootSplash.hide({fade: true});
     }, 0);
   }, []);
+
+  // AsyncStorage.removeItem('@session');
+
+  const getAllKeys = async () => {
+    let jsonValue;
+    try {
+      jsonValue = await AsyncStorage.getAllKeys();
+    } catch (e) {
+      console.log('Error :' + e);
+    }
+    return jsonValue.length > 0 ? jsonValue : [];
+  };
+
+  getAllKeys().then(data => {
+    if (!data.includes('@session')) {
+      console.log('Setup @session token ');
+      const testtoken = {token: ''};
+      AsyncStorage.setItem('@session', JSON.stringify(testtoken));
+    }
+  });
 
   return <NavigationComponent />;
 };
