@@ -144,6 +144,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
                 alt="Profile Picture"
                 size="xl"
                 borderRadius={10}
+                defaultSource={require('./assets/dummy_book.png')}
               />
               <Icon
                 name="camera-reverse"
@@ -286,6 +287,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
           alt="Profile Picture"
           size="xl"
           borderRadius={10}
+          defaultSource={require('./assets/dummy_book.png')}
         />
         <Heading
           width="80%"
@@ -558,6 +560,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                         alt={item.name}
                         size="md"
                         borderRadius={10}
+                        defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
                     <Column mx={4}>
@@ -604,6 +607,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 alt={toOverlay.name === '' ? 'No Image' : toOverlay.name}
                 size="xl"
                 borderRadius={10}
+                defaultSource={require('./assets/dummy_book.png')}
               />
               <Column style={{marginLeft: 10}}>
                 <Input
@@ -897,6 +901,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                         alt={item.name}
                         size="md"
                         borderRadius={10}
+                        defaultSource={require('./assets/dummy_book.png')}
                       />
                     </Center>
                     <Column mx={4} justifyContent="space-between">
@@ -948,6 +953,7 @@ const HistoryPage = ({navigation}, forceUpdate) => {
                 alt={toOverlay.name}
                 size="xl"
                 borderRadius={10}
+                defaultSource={require('./assets/dummy_book.png')}
               />
               <Heading mx={4}>{toOverlay.name}</Heading>
             </Row>
