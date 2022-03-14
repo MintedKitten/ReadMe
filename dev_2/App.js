@@ -84,7 +84,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              if (TryEditProfile(route.params.id, submitted)) {
+              if (TryEditProfile(route.params.id, profile)) {
                 navigation.navigate('Profile');
               }
             }}
@@ -103,11 +103,10 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
     picture: Yup.mixed(),
   });
 
-  const [profile, setProfile] = useState(getOneProfile(profileId));
-  let submitted = profile;
+  let profile = getOneProfile(profileId)
 
   const onSubmit = value => {
-    submitted = value;
+    profile = value;
   };
 
   return (
