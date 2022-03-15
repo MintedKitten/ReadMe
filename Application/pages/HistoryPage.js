@@ -172,7 +172,7 @@ const HistoryPage = forceUpdate => {
             borderRadius: 10,
           }}>
           <View style={{width: '90%'}}>
-            <Row>
+            <Row style={{maxWidth: '100%'}}>
               <Image
                 source={toOverlay.picture}
                 alt={toOverlay.name === '' ? 'No Image' : toOverlay.name}
@@ -180,7 +180,7 @@ const HistoryPage = forceUpdate => {
                 borderRadius={10}
                 defaultSource={require('../assets/dummy_book.png')}
               />
-              <Heading mx={4} noOfLines={3}>
+              <Heading mx={4} noOfLines={3} >
                 {toOverlay.name}
               </Heading>
             </Row>

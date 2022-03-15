@@ -117,7 +117,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
   const showConfirmDialog = item => {
     Alert.alert(
       'Are your sure?',
-      'Are you sure you want to remove this beautiful box?',
+      'Are you sure you want to remove this book?',
       [
         // The "Yes" button
         {
