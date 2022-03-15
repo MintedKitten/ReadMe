@@ -9,7 +9,7 @@
 ## Phase 3: Application
 [Video Instruction]()\
 [Application Manual]()\
-[BillBoard Poster]()\
+[Read me Poster](https://drive.google.com/file/d/1CqAKuEH7wqalLycPHVvyyqMUjrB2MvAD/view?usp=sharing)\
 [Installation APK](https://drive.google.com/file/d/1DgHQPWfoP7daftCzEIsT5a6syhXQxzG7/view?usp=sharing)
 ## Phase 4: Deployment
 [APK]()
