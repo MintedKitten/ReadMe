@@ -42,8 +42,6 @@ const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
 const TryLogin = token => {
-  // Try get Data if failed return false, else true
-  console.log(token);
 
   return true;
 };

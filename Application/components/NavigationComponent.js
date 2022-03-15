@@ -14,7 +14,6 @@ const NavigationComponent = () => {
 
   const [update, setUpdate] = useState(0);
   const forceUpdate = () => {
-    console.log('nav');
     setUpdate(update + 1);
   };
 

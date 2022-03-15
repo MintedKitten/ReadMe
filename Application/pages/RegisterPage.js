@@ -53,7 +53,6 @@ const RegisterPage = ({navigation}) => {
                   // To Registering Function
                   TryRegistering(values);
                 } catch (error) {
-                  console.log(error);
                 } finally {
                   setSubmitting(false);
                 }

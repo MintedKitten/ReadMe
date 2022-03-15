@@ -47,9 +47,6 @@ const TryGetToken = value => {
   // AsyncStorage.setItem('@session', JSON.stringify(testtoken));
   auth()
     .signInWithEmailAndPassword(value.email, value.password)
-    .then(() => {
-      console.log(value.email + ': Login Success');
-    })
     .catch(error => {
       if (error.code === 'auth/user-not-found') {
         Alert.alert('User not found. Please, try again');
@@ -61,7 +58,6 @@ const TryGetToken = value => {
         Alert.alert(error.message);
       }
     });
-  console.log(value);
 
   // return true;
 };

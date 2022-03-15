@@ -82,7 +82,6 @@ const EditProfilePage = ({navigation}, forceUpdate) => {
           try {
             onSubmit(values);
           } catch (error) {
-            console.log(error);
           } finally {
             setSubmitting(false);
           }

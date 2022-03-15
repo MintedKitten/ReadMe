@@ -64,9 +64,6 @@ const TryRegistering = value => {
       firestore()
         .collection('userInfo')
         .add(profile)
-        .then(() => {
-          console.log('new profile created!');
-        });
     })
     .catch(error => {
       if (error.code === 'auth/email-already-in-use') {
@@ -79,8 +76,6 @@ const TryRegistering = value => {
         Alert.alert(error.message);
       }
     });
-
-  console.log(value);
 };
 
 export default TryRegistering;

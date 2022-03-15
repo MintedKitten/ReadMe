@@ -11,7 +11,6 @@ const Tab =
 const AppNavigationTab = () => {
   const [update, setUpdate] = useState(0);
   const forceUpdate = () => {
-    console.log('app');
     setUpdate(update + 1);
   };
 

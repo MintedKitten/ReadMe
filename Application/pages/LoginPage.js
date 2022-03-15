@@ -49,7 +49,6 @@ const LoginPage = ({navigation}, forceUpdate) => {
                 try {
                   TryGetToken(values);
                 } catch (error) {
-                  console.log(error);
                 } finally {
                   setSubmitting(false);
                 }
