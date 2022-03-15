@@ -71,9 +71,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});

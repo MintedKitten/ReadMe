@@ -20,10 +20,6 @@ import TryEditHistory from '../firebase/TryEditHistory';
 import TryGetOneReadingHistory from '../firebase/TryGetOneReadingHistory';
 
 const HistoryPage = forceUpdate => {
-  useEffect(() => {
-    getData();
-  }, []);
-
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});
   let submitted = {
@@ -31,7 +27,7 @@ const HistoryPage = forceUpdate => {
     pageread: toOverlay.pageread,
     rating: toOverlay.rating,
   };
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const toggleOverlay = () => {
@@ -39,9 +35,21 @@ const HistoryPage = forceUpdate => {
     forceUpdate();
   };
 
+  if (details == null) {
+    TryGetReadingHistory(setDetails, forceUpdate);
+
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          <Text>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const getData = () => {
     setLoading(true);
-    setDetails(TryGetReadingHistory());
+    setDetails(null);
     setLoading(false);
     forceUpdate();
   };
@@ -52,7 +60,7 @@ const HistoryPage = forceUpdate => {
 
   const onSubmit = () => {
     let tempChange = {
-      bookid: toOverlay.bookid, // NotChanging
+      book_id: toOverlay.book_id, // NotChanging
       status: submitted.status == '' ? 'None' : submitted.status,
       pageread: isNaN(submitted.pageread)
         ? 0
@@ -68,11 +76,11 @@ const HistoryPage = forceUpdate => {
         : submitted.rating < 0
         ? 0
         : submitted.rating,
-      lastedit: new Date().toISOString(),
     };
-    if (TryEditHistory(toOverlay.id, tempChange)) {
+    TryEditHistory(toOverlay.id, tempChange).then(() => {
+      toggleOverlay();
       getData();
-    }
+    });
   };
 
   return (
@@ -83,7 +91,7 @@ const HistoryPage = forceUpdate => {
           data={details}
           //Extract the key with keyExtractor
           keyExtractor={item => {
-            return item.bookid.toString();
+            return item.id.toString();
           }}
           // pull down to refresh
           onRefresh={() => {
@@ -133,7 +141,7 @@ const HistoryPage = forceUpdate => {
                           type="material"
                           color="black"
                           onPress={() => {
-                            setToOverlay(TryGetOneReadingHistory(item.id));
+                            setToOverlay(item);
                             toggleOverlay();
                           }}
                         />

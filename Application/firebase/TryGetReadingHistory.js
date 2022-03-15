@@ -36,59 +36,59 @@ import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import TryGetBookInformation from './TryGetBookInformation';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryGetReadingHistory = () => {
-  // id, bookid, status, pageread, rating
-  // const testHistory = [
-  //   {
-  //     id: 1,
-  //     bookid: 1,
-  //     acc_id: 'test_token',
-  //     status: 'Complete',
-  //     pageread: 1216,
-  //     rating: 4.5,
-  //     lastedit: new Date().toISOString(),
-  //   },
-  //   {
-  //     id: 2,
-  //     bookid: 2,
-  //     acc_id: 'test_token',
-  //     status: 'Reading',
-  //     pageread: 152,
-  //     rating: 4.2,
-  //     lastedit: new Date().toISOString(),
-  //   },
-  //   {
-  //     id: 3,
-  //     bookid: 3,
-  //     acc_id: 'test_token',
-  //     status: 'Hold',
-  //     pageread: 125,
-  //     rating: 2.5,
-  //     lastedit: new Date().toISOString(),
-  //   },
-  // ];
-  // let tempHistory = [];
-  // testHistory.forEach(element => {
-  //   let info = TryGetBookInformation().find(book => book.id === element.bookid);
-  //   console.log(info);
-  //   tempHistory.push({
-  //     id: element.id,
-  //     name: info.name,
-  //     page: info.page,
-  //     bookid: element.id,
-  //     status: element.status,
-  //     pageread: element.pageread,
-  //     rating: element.rating,
-  //     picture: info.picture,
-  //   });
-  // });
-  return [];
+const TryGetReadingHistory = async (callBack, forceUpdate) => {
+  let token = auth().currentUser.uid;
+  firestore()
+    .collection('bookInfo')
+    .where('acc_id', '==', token)
+    .get()
+    .then(qSnapshot => {
+      let bookInfo = [];
+      for (let index = 0; index < qSnapshot.docs.length; index++) {
+        const doc = qSnapshot.docs[index];
+        bookInfo.push({
+          id: doc.id,
+          acc_id: doc.get('acc_id'),
+          name: doc.get('name'),
+          author: doc.get('author'),
+          page: doc.get('page'),
+          summary: doc.get('summary'),
+          genre: doc.get('genre'),
+          picture: doc.get('picture'),
+        });
+      }
+      firestore()
+        .collection('readingHistory')
+        .where('acc_id', '==', token)
+        .get()
+        .then(qSnapshot => {
+          let history = [];
+          for (let index = 0; index < qSnapshot.docs.length; index++) {
+            const doc = qSnapshot.docs[index];
+            history.push({
+              id: doc.id,
+              name: bookInfo[index].name,
+              page: bookInfo[index].page,
+              book_id: doc.get('book_id'),
+              status: doc.get('status'),
+              pageread: doc.get('pageread'),
+              rating: doc.get('rating'),
+              picture: bookInfo[index].picture,
+            });
+          }
+          callBack(history);
+          forceUpdate();
+        });
+    });
 };
 
 export default TryGetReadingHistory;

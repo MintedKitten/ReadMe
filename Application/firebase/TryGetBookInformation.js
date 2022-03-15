@@ -46,7 +46,6 @@ const Tab =
 
 const TryGetBookInformation = async (callBack, forceUpdate) => {
   let token = auth().currentUser.uid;
-  console.log('token: ' + token);
 
   firestore()
     .collection('bookInfo')
@@ -55,7 +54,6 @@ const TryGetBookInformation = async (callBack, forceUpdate) => {
     .then(qSnapshot => {
       let bookInfo = [];
       for (let index = 0; index < qSnapshot.docs.length; index++) {
-        console.log(index);
         const doc = qSnapshot.docs[index];
         bookInfo.push({
           id: doc.id,
