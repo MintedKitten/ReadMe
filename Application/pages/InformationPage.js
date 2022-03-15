@@ -40,7 +40,6 @@ import TryGetBookInformation from '../firebase/TryGetBookInformation';
 import TryRemoveBook from '../firebase/TryRemoveBook';
 import TryEditInformation from '../firebase/TryEditInformation';
 import TryAddBook from '../firebase/TryAddBook';
-import TryGetOneBookInformation from '../firebase/TryGetOneBookInformation';
 
 const InformationPage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
@@ -110,7 +109,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
 
   const getData = () => {
     setLoading(true);
-    TryGetBookInformation(setDetails, forceUpdate);
+    setDetails(null);
     setLoading(false);
     forceUpdate();
   };
@@ -151,7 +150,8 @@ const InformationPage = ({navigation}, forceUpdate) => {
       picture: submitted.picture,
     };
     if (submitted.id != null) {
-      TryEditInformation(submitted.id, tempChange, forceUpdate).then(() => {
+      TryEditInformation(submitted.id, tempChange).then(() => {
+        toggleOverlay();
         getData();
       });
     } else {
@@ -181,7 +181,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
           // render data
           renderItem={({item}) => (
             <Box flex="1" safeAreaTop>
-              <Text></Text>
               <ScrollView>
                 <Column my={4}>
                   <Flex direction="row" mx={1} width="100%">
@@ -216,8 +215,8 @@ const InformationPage = ({navigation}, forceUpdate) => {
                         <Icon
                           name="more"
                           type="material"
-                          onPress={() => {
-                            setToOverlay(TryGetOneBookInformation(item.id));
+                          onPress={async () => {
+                            setToOverlay(item);
                             toggleOverlay();
                           }}
                         />
@@ -274,12 +273,12 @@ const InformationPage = ({navigation}, forceUpdate) => {
                         });
                         if (!result.didCancel) {
                           let tempChange = {
-                            id: toOverlay.id,
-                            name: toOverlay.name,
-                            author: toOverlay.author,
-                            page: toOverlay.page,
-                            summary: toOverlay.summary,
-                            genre: toOverlay.genre,
+                            id: submitted.id,
+                            name: submitted.name,
+                            author: submitted.author,
+                            page: submitted.page,
+                            summary: submitted.summary,
+                            genre: submitted.genre,
                             picture: {uri: result.assets[0].uri},
                           };
                           setToOverlay(tempChange);

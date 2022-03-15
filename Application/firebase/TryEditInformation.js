@@ -35,17 +35,38 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryEditInformation = async (id, values, forceUpdate) => {
-  // Attempt to edit book history failed return false and alert, otherwise true
-  console.log(id, values);
-
-  return true;
+const TryEditInformation = async (id, values) => {
+  let token = auth().currentUser.uid;
+  let fileName = 'bookPicture/' + token + '-' + values.name + '.png';
+  const ref = storage().ref(fileName);
+  await ref.delete().catch(error => {});
+  let url = '';
+  try {
+    await ref.putFile(values.picture.uri);
+    url = await ref.getDownloadURL();
+  } catch (e) {
+    url = values.picture.uri;
+  }
+  let data = {
+    acc_id: token,
+    name: values.name,
+    author: values.author,
+    page: values.page,
+    summary: values.summary,
+    genre: values.genre,
+    picture: {uri: url},
+    lastedit: new Date().toISOString(),
+  };
+  firestore().collection('bookInfo').doc(id).set(data);
 };
 
 export default TryEditInformation;

@@ -42,8 +42,11 @@ const Stack =
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryGetOneBookInformation = id => {
-  return TryGetBookInformation().find(book => book.id === id);
-};
 
-export default TryGetOneBookInformation;
+const TryGetOneBookInformation = async (id, forceUpdate) => {
+  const [book, setBook] = useState([]);
+  TryGetBookInformation(setBook, forceUpdate);
+  return book.find(b => b.id === id);
+};
+// unused
+// export default TryGetOneBookInformation;
