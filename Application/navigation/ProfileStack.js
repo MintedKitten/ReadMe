@@ -25,7 +25,7 @@ const ProfileStack = forceUpdate => {
             </Text>
           ),
         }}>
-        {({navigation, route}) => ProfilePage({navigation, route}, forceUpdate)}
+        {({navigation, route}) => ProfilePage({navigation}, forceUpdate)}
       </Stack.Screen>
       <Stack.Screen
         name="EditProfile"

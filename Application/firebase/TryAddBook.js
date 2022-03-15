@@ -35,17 +35,45 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryAddBook = values => {
+const TryAddBook = async values => {
   // Attempt to edit book history failed return false and alert, otherwise true
-  console.log(values);
-
-  return true;
+  let fileName = 'bookPicture/' + values.acc_id + '/' + values.name + '.png';
+  const ref = storage().ref(fileName);
+  await ref.delete().catch(error => {});
+  await ref.putFile(values.picture.uri);
+  const url = await ref.getDownloadURL();
+  data = {
+    acc_id: values.acc_id,
+    name: values.name,
+    author: values.author,
+    page: values.page,
+    summary: values.summary,
+    genre: values.genre,
+    picture: {uri: url},
+    lastedit: new Date().toISOString(),
+  };
+  firestore()
+    .collection('bookInfo')
+    .add(data)
+    .then(value => {
+      historydata = {
+        book_id: value.id,
+        acc_id: values.acc_id,
+        status: '',
+        pageread: 0,
+        rating: 0,
+        lastedit: new Date().toISOString(),
+      };
+      firestore().collection('readingHistory').add(historydata);
+    });
 };
 
 export default TryAddBook;

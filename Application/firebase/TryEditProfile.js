@@ -37,7 +37,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {utils} from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
 
 const Stack =
@@ -59,7 +58,6 @@ const TryEditProfile = async profile => {
     genre: profile.genre,
     picture: {uri: url},
   };
-  console.log(profile.id, data);
   firestore().collection('userInfo').doc(profile.id).set(data);
 };
 

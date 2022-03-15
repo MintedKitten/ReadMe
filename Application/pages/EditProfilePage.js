@@ -15,7 +15,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import TryEditProfile from '../firebase/TryEditProfile';
 import TryGetOneProfile from '../firebase/TryGetOneProfile';
 
-const EditProfilePage = ({navigation}, forceUpdate) => {
+const EditProfilePage = ({navigation, route}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -28,7 +28,8 @@ const EditProfilePage = ({navigation}, forceUpdate) => {
             onPress={() => {
               TryEditProfile(tempProfile)
                 .then(() => {
-                  navigation.navigate('Profile', {reload: true});
+                  route.params.setProfile(null);
+                  navigation.navigate('Profile');
                 })
                 .catch(err => {
                   Alert.alert('Error saving profile please try again');
@@ -121,6 +122,7 @@ const EditProfilePage = ({navigation}, forceUpdate) => {
                   const result = await launchImageLibrary({mediaType: 'photo'});
                   if (!result.didCancel) {
                     values.picture = {uri: result.assets[0].uri};
+                    handleSubmit();
                     forceUpdate();
                   }
                 }}

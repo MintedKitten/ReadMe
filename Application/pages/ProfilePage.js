@@ -5,7 +5,7 @@ import {Image, Heading} from 'native-base';
 import auth from '@react-native-firebase/auth';
 import TryGetOneProfile from '../firebase/TryGetOneProfile';
 
-const ProfilePage = ({navigation, route}, forceUpdate) => {
+const ProfilePage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -16,17 +16,13 @@ const ProfilePage = ({navigation, route}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              navigation.navigate('EditProfile');
+              navigation.navigate('EditProfile', {setProfile: setProfile});
             }}
           />
         </Text>
       ),
     });
   }, []);
-
-  if (route.params.reload !== undefined) {
-    forceUpdate();
-  }
 
   const [profile, setProfile] = useState(null);
 

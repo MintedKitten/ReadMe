@@ -134,7 +134,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
       summary: submitted.summary != '' ? submitted.summary : '',
       genre: submitted.genre != '' ? submitted.genre : '',
       picture: submitted.picture,
-      lastedit: new Date().toISOString(),
     };
     if (submitted.id != null) {
       if (TryEditInformation(submitted.id, tempChange)) {

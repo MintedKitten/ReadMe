@@ -55,15 +55,15 @@ const TryRegistering = value => {
       const profile = {
         acc_id: await auth().currentUser.getIdToken(),
         name: value.name,
-        bio: 'Love surfing',
-        genre: 'Action',
+        bio: '',
+        genre: '',
         picture: {
           uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fprofile_dummy.jpg?alt=media&token=257e7962-f1ac-449a-a97c-4d4448af9f2a',
         },
       };
       firestore()
         .collection('userInfo')
-        .add(profile)
+        .set(profile)
         .then(() => {
           console.log('new profile created!');
         });
@@ -81,8 +81,6 @@ const TryRegistering = value => {
     });
 
   console.log(value);
-
-  // return true;
 };
 
 export default TryRegistering;
