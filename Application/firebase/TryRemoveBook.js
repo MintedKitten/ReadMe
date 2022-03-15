@@ -35,15 +35,26 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const Stack =
   require('@react-navigation/native-stack').createNativeStackNavigator();
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryRemoveBook = id => {
-  // Attempt to edit book history failed return false and alert, otherwise true
-  console.log(id);
+const TryRemoveBook = async id => {
+  firestore().collection('bookInfo').doc(id).delete();
+  firestore()
+    .collection('readingHistory')
+    .where('book_id', '==', id)
+    .get()
+    .then(qSnapshot => {
+      firestore()
+        .collection('readingHistory')
+        .doc(qSnapshot.docs[0].id)
+        .delete();
+    });
 
   return true;
 };

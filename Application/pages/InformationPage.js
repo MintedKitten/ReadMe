@@ -71,7 +71,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
     });
   }, []);
 
-
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});
   let submitted = {
@@ -115,7 +114,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
     getData();
   };
 
-  const showConfirmDialog = id => {
+  const showConfirmDialog = item => {
     Alert.alert(
       'Are your sure?',
       'Are you sure you want to remove this beautiful box?',
@@ -124,7 +123,8 @@ const InformationPage = ({navigation}, forceUpdate) => {
         {
           text: 'Yes',
           onPress: () => {
-            TryRemoveBook(id);
+            TryRemoveBook(item.id);
+            getData();
           },
         },
         // The "No" button
@@ -221,7 +221,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                           name="book-off"
                           type="material-community"
                           onPress={() => {
-                            if (showConfirmDialog(item.id)) {
+                            if (showConfirmDialog(item)) {
                               forceUpdate();
                             }
                           }}
