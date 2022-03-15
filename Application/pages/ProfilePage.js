@@ -3,6 +3,7 @@ import React, {useState, useLayoutEffect, useEffect} from 'react';
 import {Icon} from 'react-native-elements';
 import {Image, Heading} from 'native-base';
 import auth from '@react-native-firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
 import TryGetOneProfile from '../firebase/TryGetOneProfile';
 
 const ProfilePage = ({navigation}, forceUpdate) => {
@@ -16,13 +17,20 @@ const ProfilePage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              navigation.navigate('EditProfile', {setProfile: setProfile});
+              navigation.navigate('EditProfile');
             }}
           />
         </Text>
       ),
     });
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setProfile(null);
+      forceUpdate();
+    }, []),
+  );
 
   const [profile, setProfile] = useState(null);
 

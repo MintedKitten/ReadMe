@@ -15,7 +15,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import TryEditProfile from '../firebase/TryEditProfile';
 import TryGetOneProfile from '../firebase/TryGetOneProfile';
 
-const EditProfilePage = ({navigation, route}, forceUpdate) => {
+const EditProfilePage = ({navigation}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -28,7 +28,6 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             onPress={() => {
               TryEditProfile(tempProfile)
                 .then(() => {
-                  route.params.setProfile(null);
                   navigation.navigate('Profile');
                 })
                 .catch(err => {

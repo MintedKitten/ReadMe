@@ -14,6 +14,7 @@ import {
   Heading,
   Input,
 } from 'native-base';
+import {useFocusEffect} from '@react-navigation/native';
 import {AirbnbRating} from 'react-native-ratings';
 import TryGetReadingHistory from '../firebase/TryGetReadingHistory';
 import TryEditHistory from '../firebase/TryEditHistory';
@@ -29,6 +30,13 @@ const HistoryPage = forceUpdate => {
   };
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setDetails(null);
+      forceUpdate();
+    }, []),
+  );
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
