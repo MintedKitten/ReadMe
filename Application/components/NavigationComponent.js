@@ -32,33 +32,6 @@ const NavigationComponent = () => {
     return null;
   }
 
-  // const [unlock, setUnlock] = useState(true);
-  // if (unlock) {
-  //   const getItem = async () => {
-  //     return await AsyncStorage.getItem('@session');
-  //   };
-  //   getItem().then(value => {
-  //     let session = JSON.parse(value);
-  //     if (session.token.length > 0) {
-  //       if (TryLogin(session.token)) {
-  //         setUnlock(false);
-  //       } else {
-  //         AsyncStorage.removeItem('@session');
-  //         return;
-  //       }
-  //     }
-  //   });
-  //   return (
-  //     <NativeBaseProvider>
-  //       <LoginNavigationStack
-  //         forceUpdate={() => {
-  //           forceUpdate();
-  //         }}
-  //       />
-  //     </NativeBaseProvider>
-  //   );
-  // }
-
   if (!user) {
     return (
       <NativeBaseProvider>

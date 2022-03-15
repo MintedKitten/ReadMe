@@ -28,11 +28,11 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             onPress={() => {
               TryEditProfile(tempProfile)
                 .then(() => {
-                  route.params.setprofile(null);
+                  route.params.setProfile(null);
                   navigation.navigate('Profile');
                 })
                 .catch(err => {
-                  Alert.alert('Error saving profile please try again');
+                  Alert.alert(err);
                   navigation.navigate('Profile');
                 });
             }}
