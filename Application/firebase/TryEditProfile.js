@@ -49,17 +49,18 @@ const TryEditProfile = async profile => {
   // Attempt to edit book history failed return false and alert, otherwise true
   let fileName = 'profilePicture/' + profile.acc_id + '.png';
   const ref = storage().ref(fileName);
+  await ref.delete().catch(error => {});
   await ref.putFile(profile.picture.uri);
   const url = await ref.getDownloadURL();
   data = {
     acc_id: profile.acc_id,
-    name: profile.acc_name,
-    bio: profile.acc_bio,
-    genre: profile.acc_genre,
+    name: profile.name,
+    bio: profile.bio,
+    genre: profile.genre,
     picture: {uri: url},
   };
-  console.log(profile.id, data)
-  firestore().collection('useInfo').doc(profile.id).update({data});
+  console.log(profile.id, data);
+  firestore().collection('userInfo').doc(profile.id).set(data);
 };
 
 export default TryEditProfile;

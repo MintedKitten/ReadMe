@@ -1,12 +1,11 @@
 import {SafeAreaView, View, Text, Linking} from 'react-native';
-import React, {useState, useLayoutEffect} from 'react';
+import React, {useState, useLayoutEffect, useEffect} from 'react';
 import {Icon} from 'react-native-elements';
 import {Image, Heading} from 'native-base';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import TryGetOneProfile from '../firebase/TryGetOneProfile';
 
-const ProfilePage = ({navigation}, forceUpdate) => {
+const ProfilePage = ({navigation, route}, forceUpdate) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -24,6 +23,10 @@ const ProfilePage = ({navigation}, forceUpdate) => {
       ),
     });
   }, []);
+
+  if (route.params.reload !== undefined) {
+    forceUpdate();
+  }
 
   const [profile, setProfile] = useState(null);
 

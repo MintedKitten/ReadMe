@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text} from 'react-native';
+import {SafeAreaView, View, Text, Alert} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import {Icon} from 'react-native-elements';
 import {
@@ -26,10 +26,14 @@ const EditProfilePage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              TryEditProfile(tempProfile).then(() => {
-                navigation.navigate('Profile');
-                forceUpdate();
-              });
+              TryEditProfile(tempProfile)
+                .then(() => {
+                  navigation.navigate('Profile', {reload: true});
+                })
+                .catch(err => {
+                  Alert.alert('Error saving profile please try again');
+                  navigation.navigate('Profile');
+                });
             }}
           />
         </Text>
