@@ -44,36 +44,35 @@ const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
 const TryAddBook = async values => {
-  // Attempt to edit book history failed return false and alert, otherwise true
-  let fileName = 'bookPicture/' + values.acc_id + '/' + values.name + '.png';
-  const ref = storage().ref(fileName);
-  await ref.delete().catch(error => {});
-  await ref.putFile(values.picture.uri);
-  const url = await ref.getDownloadURL();
-  data = {
-    acc_id: values.acc_id,
-    name: values.name,
-    author: values.author,
-    page: values.page,
-    summary: values.summary,
-    genre: values.genre,
-    picture: {uri: url},
-    lastedit: new Date().toISOString(),
-  };
-  firestore()
-    .collection('bookInfo')
-    .add(data)
-    .then(value => {
-      historydata = {
-        book_id: value.id,
-        acc_id: values.acc_id,
-        status: '',
-        pageread: 0,
-        rating: 0,
-        lastedit: new Date().toISOString(),
-      };
-      firestore().collection('readingHistory').add(historydata);
-    });
+  // let fileName = 'bookPicture/' + values.acc_id + '/' + values.name + '.png';
+  // const ref = storage().ref(fileName);
+  // await ref.delete().catch(error => {});
+  // await ref.putFile(values.picture.uri);
+  // const url = await ref.getDownloadURL();
+  // data = {
+  //   acc_id: values.acc_id,
+  //   name: values.name,
+  //   author: values.author,
+  //   page: values.page,
+  //   summary: values.summary,
+  //   genre: values.genre,
+  //   picture: {uri: url},
+  //   lastedit: new Date().toISOString(),
+  // };
+  // firestore()
+  //   .collection('bookInfo')
+  //   .add(data)
+  //   .then(async value => {
+  //     historydata = {
+  //       book_id: value.id,
+  //       acc_id: values.acc_id,
+  //       status: '',
+  //       pageread: 0,
+  //       rating: 0,
+  //       lastedit: new Date().toISOString(),
+  //     };
+  //     firestore().collection('readingHistory').add(historydata);
+  //   });
 };
 
 export default TryAddBook;

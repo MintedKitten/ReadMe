@@ -63,7 +63,7 @@ const TryRegistering = value => {
       };
       firestore()
         .collection('userInfo')
-        .set(profile)
+        .add(profile)
         .then(() => {
           console.log('new profile created!');
         });

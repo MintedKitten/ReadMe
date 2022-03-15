@@ -16,7 +16,7 @@ const ProfilePage = ({navigation}, forceUpdate) => {
             size={20}
             color="white"
             onPress={() => {
-              navigation.navigate('EditProfile', {setProfile: setProfile});
+              navigation.navigate('EditProfile', {setReload: setProfile});
             }}
           />
         </Text>

@@ -28,7 +28,7 @@ const EditProfilePage = ({navigation, route}, forceUpdate) => {
             onPress={() => {
               TryEditProfile(tempProfile)
                 .then(() => {
-                  route.params.setProfile(null);
+                  route.params.setReload(null);
                   navigation.navigate('Profile');
                 })
                 .catch(err => {
