@@ -136,13 +136,11 @@ const InformationPage = ({navigation}, forceUpdate) => {
       picture: submitted.picture,
     };
     if (submitted.id != null) {
-      if (TryEditInformation(submitted.id, tempChange)) {
+      TryEditInformation(submitted.id, tempChange)
         getData();
-      }
     } else {
-      if (TryAddBook(tempChange)) {
+      TryAddBook(tempChange)
         getData();
-      }
     }
   };
 
@@ -322,7 +320,6 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 color="black"
                 onPress={() => {
                   onSubmit();
-                  toggleOverlay();
                 }}
               />
             </Row>
