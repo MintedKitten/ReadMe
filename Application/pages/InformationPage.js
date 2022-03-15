@@ -60,7 +60,9 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 page: '',
                 summary: '',
                 genre: '',
-                picture: require('../assets/dummy_book.png'),
+                picture: {
+                  uri: 'https://firebasestorage.googleapis.com/v0/b/readme-444f4.appspot.com/o/assets%2Fdummy_book.png?alt=media&token=72b2f2c2-7cb9-4c59-9b4f-0c859d103bae',
+                },
               });
               toggleOverlay();
             }}
@@ -70,32 +72,45 @@ const InformationPage = ({navigation}, forceUpdate) => {
     });
   }, []);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [toOverlay, setToOverlay] = useState({});
   let submitted = {
     id: toOverlay.id,
-    name: toOverlay.book,
+    name: toOverlay.name,
     author: toOverlay.author,
     page: toOverlay.page,
     summary: toOverlay.summary,
     genre: toOverlay.genre,
     picture: toOverlay.picture,
   };
-  const [details, setDetails] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
     forceUpdate();
   };
 
+  const [details, setDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  if (details == null) {
+    TryGetBookInformation(setDetails, forceUpdate);
+
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          <Text>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const getData = () => {
     setLoading(true);
-    setDetails(TryGetBookInformation());
+    TryGetBookInformation(setDetails, forceUpdate);
     setLoading(false);
     forceUpdate();
   };
@@ -128,7 +143,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
   const onSubmit = () => {
     let tempChange = {
       // If any field is emtpy, the default value is used
-      name: submitted.book != '' ? submitted.book : '',
+      name: submitted.name != '' ? submitted.name : '',
       author: submitted.author != '' ? submitted.author : '',
       page: isNaN(submitted.page) ? 0 : submitted.page < 0 ? 0 : submitted.page,
       summary: submitted.summary != '' ? submitted.summary : '',
@@ -136,11 +151,14 @@ const InformationPage = ({navigation}, forceUpdate) => {
       picture: submitted.picture,
     };
     if (submitted.id != null) {
-      TryEditInformation(submitted.id, tempChange)
+      TryEditInformation(submitted.id, tempChange, forceUpdate).then(() => {
         getData();
+      });
     } else {
-      TryAddBook(tempChange)
+      TryAddBook(tempChange).then(() => {
+        toggleOverlay();
         getData();
+      });
     }
   };
 
@@ -228,7 +246,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
           <View style={{width: '90%'}}>
             <Row>
               <Image
-                source={toOverlay.picture}
+                source={submitted.picture}
                 alt="Book Image"
                 size="xl"
                 borderRadius={10}
@@ -239,8 +257,11 @@ const InformationPage = ({navigation}, forceUpdate) => {
                   <Flex style={{flexDirection: 'column'}}>
                     <Input
                       fontSize={20}
-                      defaultValue={toOverlay.name}
+                      defaultValue={submitted.name}
                       placeholder="Book Name"
+                      onChangeText={name => {
+                        submitted.name = name;
+                      }}
                     />
                     <Icon
                       name="camera-reverse"
@@ -252,7 +273,17 @@ const InformationPage = ({navigation}, forceUpdate) => {
                           mediaType: 'photo',
                         });
                         if (!result.didCancel) {
-                          console.log(result.assets); //change pic and reload
+                          let tempChange = {
+                            id: toOverlay.id,
+                            name: toOverlay.name,
+                            author: toOverlay.author,
+                            page: toOverlay.page,
+                            summary: toOverlay.summary,
+                            genre: toOverlay.genre,
+                            picture: {uri: result.assets[0].uri},
+                          };
+                          setToOverlay(tempChange);
+                          forceUpdate();
                         }
                       }}
                     />
@@ -266,7 +297,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 <Input
                   variant="outline"
                   p={0}
-                  defaultValue={'' + toOverlay.author}
+                  defaultValue={submitted.author}
                   placeholder="author"
                   onChangeText={author => {
                     submitted.author = author;
@@ -278,7 +309,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 <Input
                   variant="outline"
                   p={0}
-                  defaultValue={'' + toOverlay.page}
+                  defaultValue={submitted.page}
                   placeholder="page"
                   onChangeText={page => {
                     submitted.page = page;
@@ -290,7 +321,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                   <Text>Summary : </Text>
                   <TextInput
                     multiline={true}
-                    defaultValue={toOverlay.summary}
+                    defaultValue={submitted.summary}
                     placeholder="summary"
                     // style={{textAlignVertical: 'top'}}
                     onChangeText={summary => {
@@ -304,7 +335,7 @@ const InformationPage = ({navigation}, forceUpdate) => {
                 <Input
                   variant="outline"
                   p={0}
-                  defaultValue={toOverlay.genre}
+                  defaultValue={submitted.genre}
                   placeholder="genre"
                   onChangeText={genre => {
                     submitted.genre = genre;

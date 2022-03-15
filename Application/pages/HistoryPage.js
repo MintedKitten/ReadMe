@@ -18,16 +18,6 @@ import {AirbnbRating} from 'react-native-ratings';
 import TryGetReadingHistory from '../firebase/TryGetReadingHistory';
 import TryEditHistory from '../firebase/TryEditHistory';
 import TryGetOneReadingHistory from '../firebase/TryGetOneReadingHistory';
-import TryGetOneProfile from '../firebase/TryGetOneProfile';
-
-TryGetOneProfile();
-const profileInt = setInterval(() => {
-  if (global.windowProfile) {
-    clearInterval(profileInt);
-    global.outerProfile = global.windowProfile;
-    console.log('profile');
-  }
-}, 100);
 
 const HistoryPage = forceUpdate => {
   useEffect(() => {

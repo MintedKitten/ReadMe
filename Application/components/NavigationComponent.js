@@ -43,12 +43,6 @@ const NavigationComponent = () => {
       </NativeBaseProvider>
     );
   } else {
-    auth()
-      .currentUser.getIdToken()
-      .then(token => {
-        AsyncStorage.setItem('@session', token);
-      });
-    console.log(auth().currentUser);
     return (
       <NativeBaseProvider>
         <AppNavigationTab />

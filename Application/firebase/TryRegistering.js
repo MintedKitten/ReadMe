@@ -53,7 +53,7 @@ const TryRegistering = value => {
         photoURL: null,
       });
       const profile = {
-        acc_id: await auth().currentUser.getIdToken(),
+        acc_id: auth().currentUser.uid,
         name: value.name,
         bio: '',
         genre: '',

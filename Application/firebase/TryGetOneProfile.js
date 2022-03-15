@@ -43,28 +43,25 @@ const Stack =
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryGetOneProfile = (setProfile, forceUpdate) => {
-  auth()
-    .currentUser.getIdToken()
-    .then(token => {
-      firestore()
-        .collection('userInfo')
-        .where('acc_id', '==', token)
-        .get()
-        .then(prof => {
-          if (!prof.empty) {
-            let data = prof.docs[0];
-            setProfile({
-              id: data.id,
-              acc_id: data.get('acc_id'),
-              name: data.get('name'),
-              genre: data.get('genre'),
-              bio: data.get('bio'),
-              picture: data.get('picture'),
-            });
-            forceUpdate();
-          }
+const TryGetOneProfile = async (setProfile, forceUpdate) => {
+  token = auth().currentUser.uid;
+  await firestore()
+    .collection('userInfo')
+    .where('acc_id', '==', token)
+    .get()
+    .then(prof => {
+      if (!prof.empty) {
+        let data = prof.docs[0];
+        setProfile({
+          id: data.id,
+          acc_id: data.get('acc_id'),
+          name: data.get('name'),
+          genre: data.get('genre'),
+          bio: data.get('bio'),
+          picture: data.get('picture'),
         });
+        forceUpdate();
+      }
     });
 };
 

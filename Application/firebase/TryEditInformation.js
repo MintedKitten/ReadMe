@@ -41,7 +41,7 @@ const Stack =
 const Tab =
   require('@react-navigation/material-bottom-tabs').createMaterialBottomTabNavigator();
 
-const TryEditInformation = (id, values) => {
+const TryEditInformation = async (id, values, forceUpdate) => {
   // Attempt to edit book history failed return false and alert, otherwise true
   console.log(id, values);
 
